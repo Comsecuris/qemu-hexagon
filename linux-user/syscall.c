@@ -863,7 +863,12 @@ static abi_ulong brk_page;
 
 void target_set_brk(abi_ulong new_brk)
 {
+/* XXX: Hexagon does not align the heap to the page boundary */
+#if defined(TARGET_HEXAGON)
+    target_original_brk = target_brk = new_brk;
+#else
     target_original_brk = target_brk = HOST_PAGE_ALIGN(new_brk);
+#endif
     brk_page = HOST_PAGE_ALIGN(target_brk);
 }
 

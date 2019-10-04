@@ -978,6 +978,35 @@ static void elf_core_copy_regs(target_elf_gregset_t *regs, const CPUMBState *env
 
 #endif /* TARGET_MICROBLAZE */
 
+#ifdef TARGET_HEXAGON
+
+#define ELF_START_MMAP 0x80000000
+
+#define elf_check_arch(x) ( (x) == EM_HEXAGON )
+
+#define ELF_CLASS   ELFCLASS32
+#define ELF_ARCH    EM_HEXAGON
+
+static inline void init_thread(struct target_pt_regs *regs,
+                               struct image_info *infop)
+{
+    regs->gpr[29] = infop->start_stack;
+    regs->cr[9] = infop->entry;
+}
+
+#define ELF_EXEC_PAGESIZE        4096
+
+#define USE_ELF_CORE_DUMP
+#define ELF_NREG 38 /* TODO */
+typedef target_elf_greg_t target_elf_gregset_t[ELF_NREG];
+
+static void elf_core_copy_regs(target_elf_gregset_t *regs, const CPUHexagonState *env)
+{
+    /* TODO */
+}
+
+#endif /* TARGET_HEXAGON */
+
 #ifdef TARGET_NIOS2
 
 #define ELF_START_MMAP 0x80000000
@@ -1645,6 +1674,9 @@ static abi_ulong setup_arg_pages(struct linux_binprm *bprm,
 {
     abi_ulong size, error, guard;
 
+#ifdef TARGET_HEXAGON
+    guest_stack_size = 8 * 1024 * 1024;
+#endif
     size = guest_stack_size;
     if (size < STACK_LOWER_LIMIT) {
         size = STACK_LOWER_LIMIT;
@@ -1654,8 +1686,13 @@ static abi_ulong setup_arg_pages(struct linux_binprm *bprm,
         guard = qemu_real_host_page_size;
     }
 
+#ifdef TARGET_HEXAGON
+    error = target_mmap(0x3f0e000, size + guard, PROT_READ | PROT_WRITE,
+                        MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
+#else
     error = target_mmap(0, size + guard, PROT_READ | PROT_WRITE,
                         MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+#endif
     if (error == -1) {
         perror("mmap stack");
         exit(-1);
@@ -2621,6 +2658,10 @@ int load_elf_binary(struct linux_binprm *bprm, struct image_info *info)
     /* Do this so that we can load the interpreter, if need be.  We will
        change some of these later */
     bprm->p = setup_arg_pages(bprm, info);
+
+#ifdef TARGET_HEXAGON
+    bprm->p += 0x480;
+#endif
 
     scratch = g_new0(char, TARGET_PAGE_SIZE);
     if (STACK_GROWS_DOWN) {

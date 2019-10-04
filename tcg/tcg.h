@@ -1072,6 +1072,7 @@ TCGOp *tcg_emit_op(TCGOpcode opc);
 void tcg_op_remove(TCGContext *s, TCGOp *op);
 TCGOp *tcg_op_insert_before(TCGContext *s, TCGOp *op, TCGOpcode opc, int narg);
 TCGOp *tcg_op_insert_after(TCGContext *s, TCGOp *op, TCGOpcode opc, int narg);
+void tcg_op_move_range_after(TCGOp *begin, TCGOp *end, TCGOp *pos);
 
 void tcg_optimize(TCGContext *s);
 

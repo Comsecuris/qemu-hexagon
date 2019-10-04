@@ -59,7 +59,8 @@
 #if (defined(TARGET_I386) && defined(TARGET_ABI32)) \
     || (defined(TARGET_ARM) && defined(TARGET_ABI32)) \
     || defined(TARGET_SPARC) \
-    || defined(TARGET_M68K) || defined(TARGET_SH4) || defined(TARGET_CRIS)
+    || defined(TARGET_M68K) || defined(TARGET_SH4) || defined(TARGET_CRIS) \
+    || defined(TARGET_HEXAGON)
     /* 16 bit uid wrappers emulation */
 #define USE_UID16
 #define target_id uint16_t
@@ -72,7 +73,7 @@
     || defined(TARGET_S390X) \
     || defined(TARGET_OPENRISC) || defined(TARGET_TILEGX) \
     || defined(TARGET_NIOS2) || defined(TARGET_RISCV) \
-    || defined(TARGET_XTENSA)
+    || defined(TARGET_XTENSA) || defined(TARGET_HEXAGON)
 
 #define TARGET_IOC_SIZEBITS	14
 #define TARGET_IOC_DIRBITS	2
@@ -1149,7 +1150,8 @@ struct target_winsize {
 
 #if (defined(TARGET_I386) && defined(TARGET_ABI32)) \
     || (defined(TARGET_ARM) && defined(TARGET_ABI32)) \
-    || defined(TARGET_CRIS)
+    || defined(TARGET_CRIS) || defined(TARGET_HEXAGON)
+
 struct target_stat {
 	unsigned short st_dev;
 	unsigned short __pad1;

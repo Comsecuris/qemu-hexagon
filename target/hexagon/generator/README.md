@@ -1,0 +1,564 @@
+# QEMU Hexagon Frontend Generator
+
+## Compile-time/Run-time
+
+Due to the complex nature of this software piece, a foreword about the different
+computation times is needed.
+The final software includes 5 different computation times, those are:
+
+- decoder generation time
+- bison-time (semantics execution)
+- QEMU-compile time (QEMU compilation)
+- QEMU-time (tinycode compilation)
+- runtime (tinycode execution)
+
+These five layers of computation must not be mistaken one another,
+otherwise bugs and error will arise.
+
+## Components
+
+- `best-decoding`
+- `decoder_gen.py`
+- `semantics`
+
+### `best-decoding`
+
+### `decoder_gen.py`
+
+This python script has the purpose of converting all the information
+extracted from the ISA manual to source code implementing the Hexagon
+frontend.
+
+All the information from the ISA manual has been extracted with
+[Tabula](https://tabula.technology/), a semi-automatic PDF extraction tool.
+The information extracted is contained in the following files:
+
+- `instructions.csv`
+
+    This file contains all the 1508 instructions of the Hexagon ISA, and each
+    one is associated with an encoding scheme, the encoding scheme contains
+    information about the fixed and variabile bits of each instruction.
+    From this csv we extract the bit ranges of the instruction word to be
+    interpreted to parse all the operands of a single instruction.
+
+    The encoding scheme is expressed as follows:
+    - `1` is a constant one
+    - `0` is a constant zero
+    - `-` is a don't care
+    - `i` is the encoding of a constant denoted by `#s` or `#u`
+    - `I` is the encoding of a constant denoted by `#S` or `#U`
+    - `P` are the parse bits
+    - `s` is the encoding of Rs
+    - `d` is the encoding of Rd
+    - `x` is the encoding of Rx
+    - `y` is the encoding of Ry
+    - `t` is the encoding of Rt
+    - `e` is the encoding of Re
+    - `u` is the encoding of Pu
+    - `v` is the encoding of Pv
+- `meta-instructions.csv`
+
+    This file encompasses all the 1066 semantic behaviours contained
+    in the ISA manual. We call the elements of this csv _meta-instructions_.
+    The first argument of the csv is a regex for matching
+    a behaviour to a set of instructions, the second argument is a
+    description of the semantic of that group of instructions.
+    The description is expressed in a pseudo-C language; for interpreting
+    this language we will refer firstly to the description of a certain
+    meta-instruction present in the ISA manual, and secondly to the
+    C-language semantics.
+- `sub-instructions.csv`
+
+    This file is analogue to the instructions.csv, but refers to the
+    sub-instructions which compose the duplex instructions.
+- `const-ext.csv`
+
+    This csv file describes the instructions which accept a constant
+    extender. The first argument is the index of the constant value to be
+    extended, while the second argument of the csv will be converted in a
+    regex that will match one or more instructions.
+
+The goal of the `decoder_gen.py` script is to generate a QEMU function for
+each meta-instruction of the aforementioned `meta-instructions.csv`.
+This function will contain the QEMU code to generate the QEMU tinycode
+which will execute the semantics of each instruction.
+Each meta-instruction may contain one or more parametric values, so that
+it can match several instructions.
+Every value is converted to a QEMU function parameter, which will get
+a QEMU-runtime known value dependend on the particular instruction
+which has matched that meta-instruction.
+Also all the parameters of each instruction, obtained from the parsing
+of the instruction word will be converted into QEMU function parameters,
+so that the parsing step can be decoupled from the execution step.
+
+#### Generation Process
+
+The `decoder_gen.py` script executes several steps, each one represented
+by a function invocation in the main function.
+First, data is parsed from the csv files described above, then the regexes
+contained in the csv files are translated into the python regex syntax,
+so that they can be used programmatically in this same script.
+The next step is to build the mapping between meta-instructions and instructions
+, we do so by building the regex with the `to_regex` function and mapping
+that function to the regexes extracted from the csv.
+Meta-instruction may have one or more optional values have tipically
+the form of `[!]`, `[&|]` or `[01]` which will have a QEMU-runtime boolean
+value for each of the matching instructions.
+Here, while converting the regexes we create a matching group for each
+optional parameter, so that while matching each instruction, we can easily
+extract the value of each parameter.
+
+The `gen_decoder_header` and `gen_macros` functions then emit all the constant
+headers and macros which will be needed by the produced QEMU source files.
+
+#### Decoder Generation
+
+The `gen_decoder_switch` translates the decoding tree JSON generated by
+the `best-decoding` script into a tree of nested switch-case in the QEMU
+code which will handle the logarithmic part of the instructions identification.
+After we have reached one of the leaf nodes of the identification tree, if
+there is still ambiguity left for the instruction identity, a pattern-matching
+algorithm is applied.
+The algorithm is implemented in a constant-time-computation fashion,
+the instruction word is combined with a mask defining the constant bits,
+and with a value defining the instructions considered in the pattern-match.
+Care has been taken to assert when more than one instruction matches an
+instruction word.
+As a result we return the index of the instruction, which will be
+used later to call the corresponding semantic function.
+All of this happens in the generated `decode` QEMU function.
+
+The next function to be generated is the `execute` QEMU function which will
+take as a parameter the index of the parsed instruction and extracts the
+parameters and constants from the target instructions and then calls the
+matching meta-instruction function with the said parameters and with the
+correct matching parameters.
+In this function we also take care of applying constant-extension and
+sign-extension as needed. In addition to all the instruction semantics
+relative to the parameter parsing such as `:n` multiplication.
+
+#### QEMU Functions Emission
+
+The function `gen_functions` is in charge of emitting for each meta-instruction,
+a QEMU function that will emit the correct tinycode to perform its semantics.
+This function works by using the meta-instruction matching results to
+craft the function signature, then is call the `gen_function_body` function
+to emit the body of each newly created function.
+Moreover the gen_function_body calls for each of the meta-instruction an
+external parser called `semantics` which receives as input the pseudo-code
+of each meta-instruction and some parameters derived from the meta-instruction
+signature, such as the load/store size and the signedness of operations.
+The `semantics` program generates the QEMU code that will be filled inside
+the instruction body.
+
+#### Further Steps
+
+The functions `gen_sub_decoder` and `gen_sub_execute` perform those
+same steps for the sub-instructions employed in the Hexagon duplex instructions.
+
+The gen_endloop generates the special functions for the endloop instructions,
+since these instructions are not encoded in an instruction word but they
+are encoded in the parse bits, only the semantic functions are needed.
+
+The `indent` function applies the `GNU indent` utility to the whole generated
+code. To increased code cleanliness.
+
+### semantics
+
+The `semantics` parser is built with `GNU flex/bison` parser generation tools.
+Its source code, included in `decoder/semantics` is divided in three source
+files:
+
+- `semantics.lex`
+
+    This file contains the lexical tokens which define the meta-instructions
+    pseudo-code. The first ~75 tokens are simple tokens, when the pseudo-code
+    will be parsed and the string will be matched, the corresponding token
+    will be returned.
+    The next tokens are related to registers, variables and immediates.
+    Those tokens usually contain a variable part, e.g., the register `r0`
+    contains 0 as its index, this information is hereby parsed and
+    a struct is populated with all the information retrieved.
+    Here all the different types of registers are parsed into a single
+    `REG` token, with an associated information structure.
+    The `TOKEN_DEBUG` macro, if defined, allows to print the tokenized
+    input, useful to inspect tokenization problems and errors.
+    Remember that token are defined in order of decreasing priority.
+- `semantics_struct.h`
+
+    This file contains all the C structs which are used in the parser.
+- `semantics.y`
+
+    This file contains the parser grammar and helper functions.
+    The first notable part is at line 1175,
+    `%token LBR RBR LPAR RPAR LSQ RSQ LARR`
+    where all the tokens defined
+    in the `semantics.lex` file are declared.
+    At line 1188 `%token <index> SA` the binding between tokens and C struct
+    containing their information is defined.
+    At line 1203 `%left COMMA` the precedence between all the operators and
+    their associativity are defined, the operator precedence defined in this
+    code resembles closely the one of the C language.
+    The precedence of operators is an utmost important part of the parser
+    because it is used to solve Shift-Reduce conflicts that may arise
+    by editing the grammar.
+    If a conflict arise, make sure that the involved tokens are correctly
+    differentiated by precedence and/or associativity.
+
+## The grammar
+
+At line 1223 `code  : statements`, begins the definition of the language grammar.
+This grammar defines the structure of the attribute grammar tree
+which is used to parse the pseudo-code.
+The grammar follows a very simple structure, which is depicted in this
+document; a pseudocode is a list of statements, statements can be
+control statement (control flow etc) or assign statements.
+Here we introduce the two most important non-terminals of this grammar:
+the `lvalue`s and `rvalue`s.
+
+#### `lvalue`s
+
+`lvalue`s represent a value which can be assigned to, this includes
+`reg` the nonterminal which parses the registers with their vectorial
+access and .new attributes and `extra`, which consider the special values
+used in the pseudocode to handle specific tasks i.e. hardware loop iteration.
+Note that there exists other entities which can be assigned to like
+predicates and the program counter, but they are considered separately
+since they need special code to be handled.
+For example the four predicate registers are grouped into a single control
+register, so it needs special handling. In fact the predicate index is
+available at QEMU-time, according to that index a specific byte of the C4
+control register is first zeroed (using a mask) and then filled up with
+the target predicate value.
+The `assign_statement` rule also defines special assignments like `+=` and
+so on. In our code also `IMM`ediates can be assigned to, in the sense
+that the pseudo-code assign values to some of the constants of the instructions,
+these values are represented by parameters of our QEMU functions, and we
+are simply assigning at QEMU-time some different values to those parameters.
+
+#### `rvalue`s
+
+The other non-terminal `rvalue` represents a value computed from an expression.
+This value can be directly derived from a register or produced by the use
+of operators such as `+` or `<<`.
+Each `rvalue` non-terminal is associated with a struct that defines
+whether it is a register or a temporary value generated from an operation.
+The contents of the structs is used to call the correct tinycode generation
+functions and to print the rvalue correctly when it needs to be used.
+Actually also the `reg` nonterminal is of type rvalue, so that while
+using the copy rule `reg = rvalue` no further assignment is required.
+The majority of the operators' code emission is handled by the `gen_bin_op`
+function, which switches on the operation type and emits the code.
+Different function calls are emitted whether the operands are `IMM`ediates or
+`REG`isters, so that an appropriate constant folding can be performed.
+For example if we consider the following `rvalue` nonterminal: `1 + 1`,
+this will match under the `rvalue PLUS rvalue` rule, the two `rvalue`s will
+be copied from `IMM` tokens, thus when evaluating the immediateness of the
+expression, the constant folding will be applied.
+In fact the emitted code will be `int32_t tmp_0 = 1 + 1;\n`, which will
+perform its computation at QEMU-compile time, therefore shaving off execution
+time from the QEMU-time and runtime.
+
+Every `rvalue` in the end will result in the emission of a TCGv which
+is a pointer of a tinycode variable.
+This variable may be of two kinds:
+
+- a Hexagon register (global tinycode variable)
+- a temporary value (local tinycode variable).
+
+In some case where constant folding may be applied, the `rvalue` results
+in the emission of a C automatic variable at QEMU-time.
+This mechanism can be used by creating temporary variables using the
+function `gen_imm_value`.
+Note that this constant folding is possible only with value which are known
+at QEMU-time. `rvalue`s of this kind are characterized by the
+`rvalue.type == IMMEDIATE` condition.
+
+After an `rvalue` has been used inside a QEMU function, it must be freed
+using the `rvalue_free` function. This function, in the case the `rvalue`
+represents a temporary value, emits a free instructions which allows QEMU
+to decrease the temporary values counter.
+
+#### Type System
+
+The type system of the semantics parser is bi-dimensional.
+Variables can be either 32-bit or 64-bit, signed or unsigned.
+Bit width is encoded in `rvalue->bit_width`, signedness is encoded
+in `rvalue->is_unsigned`.
+The type of each variable is set by the lexer in case the variables are
+registers or constant.
+Otherwise if the variable is the result of an expression, the type
+is inferred from the operands.
+
+Here particular attention is posed to the selection of the bit width of
+the operation, if both operands are 32-bit, the result is 32-bit, in all
+other cases the result is 64-bit.
+If a 32-bit value is left-shifted by more than 32 bits, the result must
+be 64-bit wide.
+The result is stored at QEMU-time into a temporary value created at line
+537, `res = gen_tmp(bit_width);`. The `gen_tmp` function actually emits
+the code to generate the temporary
+and stores details about the temporary such as its index and bit-width
+into the corresponding struct.
+
+#### Code Emission
+
+Code emission is performed throug the OUT macro, which takes a variable
+number of arguments, which are all pointers, and for each of them calls
+the correct `*_print` function. All the `*_print` functions are listed
+at the beginning of the `semantics.y` file.
+Here for some non-terminals of the grammar, a corresponding QEMU-code
+is generated.
+
+#### 64-bit Registers
+
+In Hexagon, 64-bit registers are just the concatenation of contiguous 32bit
+GPRs. Therefore reading and writing to those registers is a complex task. To
+read the value of a 64bit registers to a temporary we use the `reg_concat`
+function. To assign a value to a 64-bit register, we must assign separately the
+higher and the lower word, this is performed from line 1101 of the `semantics.y`
+source file `if (dest->bit_width == 64)`.
+
+#### Special Assignments
+
+Special assignments like `INC` (`+=`) are handled by performing first a
+`reg_concat`, to extract value from eventual 64-bit registers, then the
+operation is emitted via the `gen_bin_op`, finally the value is assigned
+back to the destination register in the `gen_assign` function.
+
+#### Vectorial Accesses
+
+The Hexagon pseudo-code also encompasses vectorial access facilities,
+these are parsed in the `semantics.lex` file, then added to their respective
+`reg`s via the rules at line 1902 `| reg VEC`. 
+If a `reg`ister has a vectorial access
+registered in its struct, its assignment will become `deposit` operations
+and its conversions to `rvalue` will become `extract` operations.
+
+#### Logical Operators
+
+The optional not `[!]` operator is handled with a `movcond` tinycode instruction
+which negates the `rvalue` if the `not[01]` boolean parameter is true.
+
+The comparison values are handled by the `gen_bin_cmp` function which
+emits `setcond[i]` tinycode operation to materialize them.
+In some cases (LT, GT, LTE, GTE comparisons), is relevant whether the
+comparison itself is performed is a signed or unsigned fashion.
+If both of the operands have the same signedness, the signedness of the
+comparison is the same, otherwise the signedness is taken from the one
+specified in the meta-instruction signature (passed from `decoder-gen.py`).
+
+#### Memory Operations
+
+Load and stores are handled via the `STAREA` (`*EA`) token, when
+it is parsed by the `rvalue` rule, we emit a load operation; instead
+when it is used by the `STAREA ASSIGN rvalue` rule, we emit a store operation.
+The size of the loads and stores is passed by the `decoder_gen.py` script
+via an `argv` value, parsed at line 1960 `switch (opt) {`.
+In particular the memory operation size is inferred by the meta-instruction
+string in the following way:
+
+If the `mem` keyword is followed by the `u` suffix, the operation is
+to be considered unsigned. The same holds for comparison e.g. `cmp.gtu` is
+a unsigned *greater than* comparison operator.
+
+- `memb` is a byte load (8 bit)
+- `memh` is a half word load (16 bit)
+- `memw` is a word load (32 bit)
+- `memd` is a double word load (64 bit)
+
+#### Control Flow
+
+The if statements are handled by emitting labels and fixing them later on.
+In particular a everything starts from the `if_stmt` statement, which
+generates the _false_ label, when evaluating the if we must jump to that
+label only if the if condition does not hold (`brcondi` at line 1471).
+The label is fixed in the `if_statement` rule which handles also eventual
+`ELSE` statements.
+This implementation handles arbitrarily nested if-else combinations.
+Note that the _dangling else_ problem generates a conflict. This is the only
+admittable conflict in the whole grammar. This is specified at line 1173
+`%expect 1`.
+
+The `for` statements are very limited in the pseudo-code, in fact they are
+used for vectorial accesses and iterate only for a fixed number of times.
+Given this constraint we can simply emit another identical `for` loop at
+QEMU-time. Then QEMU will perform the loop unrolling for us by emitting
+the tinycode several times.
+
+Ternary assignments are translated using the `movcond` tinycode instruction.
+
+#### Building
+
+When working on the aforementioned source file, use this oneliner to ensure
+that QEMU source code is updated upon modification to the `semantics` files:
+
+```
+cd decoder
+SOURCE=~/Documents/Extra/Hexagon/decoder/semantics && while true; \
+do inotifywait -r -e close_write $SOURCE && cd semantics && make clean; \
+clear && make -j5; cd ..; ./decoder_gen.py ; \
+cp decoder.h decoder.c ../qemu/target/hexagon; done
+```
+
+## Commit, .new, destination values
+
+Hexagon parallel execution becomes serial in our emulator,
+in the design document it is explained how we solve the dependencies issue
+and the .new registers issue.
+The implementation of these techniques is split between the `decoder.h` file
+and the `translate.c` file.
+In the `decoder.h` file there are the `SET_USED_REG`, `SET_WRITTEN_PRE` and
+other macros. These macros keep track of which registers have been written
+in each instruction, this information is known at QEMU-time, and is used
+to detect which registers will be committed from the .new registers to the
+normal registers. Also a list of output registers is kept so that the `Nt`
+references can be redirected to the correct register index.
+In `translate.c`, at line 212 `static inline void handle_packet_end(DisasContext *dc)`
+we handle those information we collected,
+by committing the written .new registers and inject initialization of the
+conditional registers.
+This last operation is needed because if we have a conditional register
+write, we only know at runtime whether the register will be written or not,
+but we have to issue the commit anyways. So we inject in the prologue,
+a code which initializes the .new values with the current register values.
+
+## Double jumps
+
+Double jumps are handled by incrementing a counter every time the PC is
+written and issuing every write to the PC with a `movcond` instruction which
+checks if the PC has already been written. In this case, at runtime,
+only the first write to the PC will be issued.
+
+## Employed structs
+
+All the used structs are defined in the `semantics_struct.h` file.
+The most important is the `t_hex_value` struct which contains all the
+information needed by the `rvalue` and `lvalue` non-terminals.
+These structs are filled by the lexer while crafting `REG` and `IMM`
+tokens and also generated by the grammar while creating temporaries.
+The enum `rvalue_union_tag` allows to distinguish between `rvalue` types.
+Among its members are the `is_vectorial`, `is_optnew` and `is_dotnew` flags
+which control the emission of the target `rvalue`, for example if the
+`is_dotnew` flag is present, the `GPR_new[i]` TCGv will be emitted instead
+of `GPR[i]`.
+
+## Grammar Example
+
+In this example we examine the meta-instruction number 0 and follow
+its translation into QEMU code, here is the considered meta-instruction.
+
+```
+Rd=add(Rs,#s16)
+```
+
+With its pseudo-code
+
+```
+apply_extension(#s);
+Rd=Rs+#s;
+```
+
+First let's apply the tokenizer to the pseudocode:
+
+```
+EXT LPAR IMM RPAR SEMI REG ASSIGN REG PLUS IMM SEMI
+```
+
+The `apply_extension` statement is ignored since every sign-extension
+is performed while extranting constants at the time of parsing.
+Therefore for greater clarity we omit it from the parsing tree.
+The following statement corresponds to this parsing tree:
+
+```
+code
+|
+statements
+|
+statement
+|
+assign_statement SEMI
+|
+lvalue ASSIGN rvalue
+|             |
+reg           rvalue PLUS rvalue
+|             |           |
+REG           reg         IMM
+              |
+              REG
+```
+
+This is the code corresponding to that meta-instruction, the
+function signature, `regs` declaration and return statement are emitted
+by the `decoder_gen.py` script, the rest is filled in by the `semantics`
+parser.
+
+```
+regs_t function_0(DisasContext * dc, uint32_t d, uint32_t s, uint32_t i)
+{
+    regs_t regs = { 0  };
+    TCGv_i32 tmp_0 = tcg_temp_new_i32();
+    tcg_gen_addi_i32(tmp_0, GPR[s], i);
+    tcg_gen_mov_tl(GPR_new[d], tmp_0);
+    SET_USED_REG(regs, d);
+    tcg_temp_free_i32(tmp_0);
+    return regs;
+
+}
+```
+
+The first emitted statement is the declaration of a temporary value,
+which will be used to store the `rvalue` resulting from the sum.
+Then the operation itself is emitted, with the correct register index
+and constant, taken from the function signature.
+The `assign_statement` rule will result in a `mov` instruction
+being emitted from the temporary value into the destination register.
+At the end the temporary value is freed.
+
+## translate.c
+
+This piece of code handles the parsing and execution of the Hexagon code.
+Everything begins from the `gen_intermediate_code` function, which
+loads the instruction words from memory and feeds them to the `decode_packet`.
+This function performs a coarse parsing of the instruction word by parsing
+the _parse bits_. This let us distinguish between constant extender, endloops,
+end of packets, duplexes etc.
+If we have a standard instruction we feed it to the `decode` function,
+which is generated automatically by the `decoder_gen.py` script.
+The result is the instruction index, which is fed into the `execute` function.
+The `execute` function returns a struct containing data about the used registers
+, conditional registers and output registers, which is accumulated using the
+`regs_append` function, and used to implement the `.new` semantics.
+
+#### Duplexes
+
+In case of duplex instructions we extract the two sub_instructions and
+craft a special instruction word for each of them by prepending a numeric
+encoding of their class. The encoding is the following:
+
+- 0 -> L1
+- 1 -> L2
+- 2 -> S1
+- 3 -> S1
+- 4 -> A
+
+These numbers are encoded into the bits 13-14 of the newly crafted instruction
+words. These instruction words are called `first_sub` and `last_sub`.
+If a constant extender is present, it must extend only the sub-instruction
+in slot 1. This is enforced by disabling the eventual `extender_present`
+flag after the execution of the slot 1, since the slot1 sub-instruction
+is always executed before the slot0 sub-instruction.
+
+#### Dependency Reordering
+
+Some hexagon packets may present dependencies between instructions,
+this happens usually for predicates assignments and jumps.
+This is handled by emitting the `SET_READ_PRE` and `SET_WRITTEN_PRE`
+macros, which register new dependencies and dependencies resolution.
+The dependencies are resolved in the `solve_dependencies` function using
+a greedy algorithm. The algorithm adds to a new list all the instruction which
+have no pending dependencies, then re-computes the set of all the read
+and written predicates and cycles again.
+An artificial dependency is introduced between jumps, so that they are not
+reordered inside a packet, this is because in the hexagon architecture, only
+a single jump inside a packet can be executed, the first available one.

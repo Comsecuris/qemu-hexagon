@@ -1,0 +1,1067 @@
+"Rd=add(Rs,#s16)","apply_extension(#s);Rd=Rs+#s;"
+"Rd=add(Rs,Rt)",Rd=Rs+Rt;
+"Rd=add(Rs,Rt):sat",Rd=sat32(Rs+Rt);
+"Rd=and(Rs,#s10)","apply_extension(#s);Rd=Rs&#s;"
+"Rd=and(Rs,Rt)",Rd=Rs&Rt;
+"Rd=and(Rt,~Rs)",Rd = (Rt & ~Rs);
+Rd=not(Rs),"Assembler mapped to: ""Rd=sub(#-1,Rs)"""
+"Rd=or(Rs,#s10)","apply_extension(#s);Rd=Rs|#s;"
+"Rd=or(Rs,Rt)",Rd=Rs|Rt;
+"Rd=or(Rt,~Rs)",Rd = (Rt | ~Rs);
+"Rd=xor(Rs,Rt)",Rd=Rs^Rt;
+Rd=neg(Rs),"Assembler mapped to: ""Rd=sub(#0,Rs)"""
+nop,
+"Rd=sub(#s10,Rs)","apply_extension(#s);Rd=#s-Rs;"
+"Rd=sub(Rt,Rs)",Rd=Rt-Rs;
+"Rd=sub(Rt,Rs):sat",Rd=sat32(Rt - Rs);
+Rd=sxtb(Rs),Rd = sxt8->32(Rs);
+Rd=sxth(Rs),Rd = sxt16->32(Rs);
+Rd=#s16,"apply_extension(#s);Rd=#s;"
+Rdd=#s8,"if (""#s8<0"") {Assembler mapped to: ""Rdd=combine(#-1,#s8)"";} else {Assembler mapped to:""Rdd=combine(#0,#s8)"";};"
+Rx.[HL]=#u16,Rx.h[01]=#u;
+Rd=Rs,Rd=Rs;
+Rdd=Rss,"Assembler mapped to:""Rdd=combine(Rss.H32,Rss.L32)"""
+"Rd=vaddh(Rs,Rt)[:sat]","for (i=0;i<2;i++) {Rd.h[i]=[sat16](Rs.h[i]+Rt.h[i]);};"
+"Rd=vadduh(Rs,Rt):sat","for (i=0;i<2;i++) {Rd.h[i]=usat16(Rs.uh[i]+Rt.uh[i]);};"
+"Rd=vavgh(Rs,Rt)","for (i=0;i<2;i++) {Rd.h[i]=((Rs.h[i]+Rt.h[i])>>1);};"
+"Rd=vavgh(Rs,Rt):rnd","for (i=0;i<2;i++) {Rd.h[i]=((Rs.h[i]+Rt.h[i]+1)>>1);};"
+"Rd=vnavgh(Rt,Rs)","for (i=0;i<2;i++) {Rd.h[i]=((Rt.h[i]-Rs.h[i])>>1);};"
+"Rd=vsubh(Rt,Rs)[:sat]","for (i=0;i<2;i++) {Rd.h[i]=[sat16](Rt.h[i]-Rs.h[i]);};"
+"Rd=vsubuh(Rt,Rs):sat","for (i=0;i<2;i++) {Rd.h[i]=usat16(Rt.uh[i]-Rs.uh[i]);};"
+Rd=zxtb(Rs),"Assembler mapped to: ""Rd=and(Rs,#255)"""
+Rd=zxth(Rs),Rd = zxt16->32(Rs);
+"Rd=combine(Rt.[HL],Rs.[HL])",Rd = (Rt.uh[01]<<16) | Rs.uh[01];
+"Rdd=combine(#s8,#S8)","apply_extension(#s);Rdd.w[0]=#S;Rdd.w[1]=#s;"
+"Rdd=combine(#s8,#U6)","apply_extension(#U);Rdd.w[0]=#U;Rdd.w[1]=#s;"
+"Rdd=combine(#s8,Rs)","apply_extension(#s);Rdd.w[0]=Rs;Rdd.w[1]=#s;"
+"Rdd=combine(Rs,#s8)","apply_extension(#s);Rdd.w[0]=#s;Rdd.w[1]=Rs;"
+"Rdd=combine(Rs,Rt)","Rdd.w[0]=Rt;Rdd.w[1]=Rs;"
+"Rd=mux(Pu,#s8,#S8)","apply_extension(#s);Rd = (Pu[0]) ? #s : #S;"
+"Rd=mux(Pu,#s8,Rs)","apply_extension(#s);Rd = (Pu[0]) ? #s : Rs;"
+"Rd=mux(Pu,Rs,#s8)","apply_extension(#s);Rd = (Pu[0]) ? Rs : #s;"
+"Rd=mux(Pu,Rs,Rt)", Rd = (Pu[0]) ? Rs : Rt;
+Rd=aslh(Rs),Rd=Rs<<16;
+Rd=asrh(Rs),Rd=Rs>>16;
+"Rdd=packhl(Rs,Rt)","Rdd.h[0]=Rt.h[0];Rdd.h[1]=Rs.h[0];Rdd.h[2]=Rt.h[1];Rdd.h[3]=Rs.h[1];"
+"if ([!]Pu[.new])Rd=add(Rs,#s8)","if([!]Pu[.new][0]){apply_extension(#s);Rd=Rs+#s;} else {NOP;};"
+"if ([!]Pu[.new])Rd=add(Rs,Rt)","if([!]Pu[.new][0]){Rd=Rs+Rt;} else {NOP;};"
+if ([!]Pu[.new]) Rd=aslh(Rs),"if([!]Pu[.new][0]){Rd=Rs<<16;} else {NOP;};"
+if ([!]Pu[.new]) Rd=asrh(Rs),"if([!]Pu[.new][0]){Rd=Rs>>16;} else {NOP;};"
+"if ([!]Pu[.new])Rdd=combine(Rs,Rt)","if ([!]Pu[.new][0]) {Rdd.w[0]=Rt;Rdd.w[1]=Rs;} else {NOP;};"
+"if ([!]Pu[.new])Rd=and(Rs,Rt)","if([!]Pu[.new][0]){Rd=Rs&Rt;} else {NOP;};"
+"if ([!]Pu[.new])Rd=or(Rs,Rt)","if([!]Pu[.new][0]){Rd=Rs|Rt;} else {NOP;};"
+"if ([!]Pu[.new])Rd=xor(Rs,Rt)","if([!]Pu[.new][0]){Rd=Rs^Rt;} else {NOP;};"
+"if ([!]Pu[.new])Rd=sub(Rt,Rs)","if([!]Pu[.new][0]){Rd=Rt-Rs;} else {NOP;};"
+if ([!]Pu[.new]) Rd=sxtb(Rs),"if([!]Pu[.new][0]){Rd=sxt8->32(Rs);} else {NOP;};"
+if ([!]Pu[.new]) Rd=sxth(Rs),"if([!]Pu[.new][0]){Rd=sxt16->32(Rs);} else {NOP;};"
+if ([!]Pu[.new]) Rd=#s12,"apply_extension(#s);if ([!]Pu[.new][0]) Rd=#s;else NOP;"
+if ([!]Pu[.new]) Rd=Rs,"Assembler mapped to: ""if ([!]Pu[.new])Rd=add(Rs,#0)"""
+if ([!]Pu[.new]) Rdd=Rss,"Assembler mapped to: ""if ([!]Pu[.new])Rdd=combine(Rss.H32,Rss.L32)"""
+if ([!]Pu[.new]) Rd=zxtb(Rs),"if([!]Pu[.new][0]){Rd=zxt8->32(Rs);} else {NOP;};"
+if ([!]Pu[.new]) Rd=zxth(Rs),"if([!]Pu[.new][0]){Rd=zxt16->32(Rs);} else {NOP;};"
+"Pd=[!]cmp.eq(Rs,#s10)","apply_extension(#s);Pd=Rs[!]=#s ? 0xff : 0x00;"
+"Pd=[!]cmp.eq(Rs,Rt)",Pd=Rs[!]=Rt ? 0xff : 0x00;
+"Pd=[!]cmp.gt(Rs,#s10)","apply_extension(#s);Pd=[!](Rs>#s ? 0xff : 0x00);"
+"Pd=cmp.gt(Rs,Rt)",Pd=Rs<=Rt ? 0x00 : 0xff;
+"Pd=!cmp.gt(Rs,Rt)",Pd=Rs<=Rt ? 0xff : 0x00;
+"Pd=cmp.gtu(Rs,#u9)","apply_extension(#u);Pd=Rs.uw[0]<=#u ? 0x00 : 0xff;"
+"Pd=!cmp.gtu(Rs,#u9)","apply_extension(#u);Pd=Rs.uw[0]<=#u ? 0xff : 0x00;"
+"Pd=cmp.gtu(Rs,Rt)",Pd=Rs.uw[0]<=Rt.uw[0] ? 0x00 : 0xff;
+"Pd=!cmp.gtu(Rs,Rt)",Pd=Rs.uw[0]<=Rt.uw[0] ? 0xff : 0x00;
+"Pd=cmp.ge(Rs,#s8)","Assembler mapped to: ""Pd=cmp.gt(Rs,#s8-1)"""
+"Pd=cmp.geu(Rs,#u8)","if (""#u8==0"") {Assembler mapped to:""Pd=cmp.eq(Rs,Rs)"";} else {Assembler mapped to:""Pd=cmp.gtu(Rs,#u8-1)"";};"
+"Pd=cmp.lt(Rs,Rt)","Assembler mapped to: ""Pd=cmp.gt(Rt,Rs)"""
+"Pd=cmp.ltu(Rs,Rt)","Assembler mapped to: ""Pd=cmp.gtu(Rt,Rs)"""
+"Rd=[!]cmp.eq(Rs,#s8)","apply_extension(#s);Rd=(Rs[!]=#s);"
+"Rd=[!]cmp.eq(Rs,Rt)",Rd=(Rs[!]=Rt);
+endloop0,"if (USR.LPCFG) {if (USR.LPCFG==1) {P3=0xff;};USR.LPCFG=USR.LPCFG-1;};if (LC0>1) {PC=SA0;LC0=LC0-1;};"
+endloop01,"if (USR.LPCFG) {if (USR.LPCFG==1) {P3=0xff;};USR.LPCFG=USR.LPCFG-1;};if (LC0>1) {PC=SA0;LC0=LC0-1;} else {if (LC1>1) {PC=SA1;LC1=LC1-1;};};"
+endloop1,"if (LC1>1) {PC=SA1;LC1=LC1-1;};"
+"Pd=[!]fastcorner9(Ps,Pt)","tmp.h[0]=(Ps<<8)|Pt;tmp.h[1]=(Ps<<8)|Pt;for (i = 1; i < 9; i++) {tmp &= tmp >> 1;};Pd = tmp == 0 ? 0xff : 0x00;"
+Pd=all8(Ps),"Pd = (Ps==0xff) ? 0xff : 0x00;"
+Pd=any8(Ps),"Pd = Ps ? 0xff : 0x00";
+"loop0(#r7:2,#U10)","apply_extension(#r);#r=#r & ~0x3;SA0=PC+#r;LC0=#U;USR.LPCFG=0;"
+"loop0(#r7:2,Rs)","apply_extension(#r);#r=#r & ~0x3;SA0=PC+#r;LC0=Rs;USR.LPCFG=0;"
+"loop1(#r7:2,#U10)","apply_extension(#r);#r=#r & ~0x3;SA1=PC+#r;LC1=#U;"
+"loop1(#r7:2,Rs)","apply_extension(#r);#r=#r & ~0x3;SA1=PC+#r;LC1=Rs;"
+"Rd=add(pc,#u6)",Rd=PC+apply_extension(#u);
+"p3=sp1loop0(#r7:2,#U10)","apply_extension(#r);#r=#r & ~0x3;SA0=PC+#r;LC0=#U;USR.LPCFG=1;P3=0;"
+"p3=sp1loop0(#r7:2,Rs)","apply_extension(#r);#r=#r & ~0x3;SA0=PC+#r;LC0=Rs;USR.LPCFG=1;P3=0;"
+"p3=sp2loop0(#r7:2,#U10)","apply_extension(#r);#r=#r & ~0x3;SA0=PC+#r;LC0=#U;USR.LPCFG=2;P3=0;"
+"p3=sp2loop0(#r7:2,Rs)","apply_extension(#r);#r=#r & ~0x3;SA0=PC+#r;LC0=Rs;USR.LPCFG=2;P3=0;"
+"p3=sp3loop0(#r7:2,#U10)","apply_extension(#r);#r=#r & ~0x3;SA0=PC+#r;LC0=#U;USR.LPCFG=3;P3=0;"
+"p3=sp3loop0(#r7:2,Rs)","apply_extension(#r);#r=#r & ~0x3;SA0=PC+#r;LC0=Rs;USR.LPCFG=3;P3=0;"
+Pd=Ps,"Assembler mapped to: ""Pd=or(Ps,Ps)"""
+"Pd=and(Ps,and(Pt,[!]Pu))",Pd = Ps & Pt & ([!]Pu);
+"Pd=and(Ps,or(Pt,[!]Pu))",Pd = Ps & (Pt | ([!]Pu));
+"Pd=and(Pt,[!]Ps)",Pd=Pt & ([!]Ps);
+Pd=not(Ps),Pd=~Ps;
+"Pd=or(Ps,and(Pt,[!]Pu))",Pd = Ps | (Pt & ([!]Pu));
+"Pd=or(Ps,or(Pt,[!]Pu))",Pd = Ps | Pt | ([!]Pu);
+"Pd=or(Pt,[!]Ps)",Pd=Pt | ([!]Ps);
+"Pd=xor(Ps,Pt)",Pd=Ps ^ Pt;
+Cd=Rs,Cd=Rs;
+Cdd=Rss,Cdd=Rss;
+Rd=Cs,Rd=Cs;
+Rdd=Css,Rdd=Css;
+callr Rs,"LR=NPC;PC=Rs;;"
+if ([!]Pu) callr Rs,";if ([!]Pu[0]) {LR=NPC;PC=Rs;;};"
+hintjr(Rs),;
+if ([!]Pu) jumpr Rs,"Assembler mapped to: ""if ([!]Pu)""""jumpr"""":nt """"Rs"""
+"if ([!]Pu[.new])jumpr:<hint> Rs","if([!]Pu[.new][0]){PC=Rs;};"
+jumpr Rs,PC=Rs;
+call #r22:2,"apply_extension(#r);#r=#r & ~0x3;LR=NPC;PC=PC+#r;;"
+if ([!]Pu) call #r15:2,"apply_extension(#r);#r=#r & ~0x3;;if ([!]Pu[0]) {LR=NPC;PC=PC+#r;;};"
+"p[01]=cmp.eq(Rs,#-1); if([!]p[01].new) jump:<hint>#r9:2","P[01]=(Rs==-1) ? 0xff : 0x00 if([!]P[01].new[0]) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"p[01]=cmp.eq(Rs,#U5); if([!]p[01].new) jump:<hint>#r9:2","P[01]=(Rs==#U) ? 0xff : 0x00 if([!]P[01].new[0]) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"p[01]=cmp.eq(Rs,Rt); if([!]p[01].new) jump:<hint>#r9:2","P[01]=(Rs==Rt) ? 0xff : 0x00 if([!]P[01].new[0]) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"p[01]=cmp.gt(Rs,#-1); if([!]p[01].new) jump:<hint>#r9:2","P[01]=(Rs>-1) ? 0xff : 0x00 if([!]P[01].new[0]) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"p[01]=cmp.gt(Rs,#U5); if([!]p[01].new) jump:<hint>#r9:2","P[01]=(Rs>#U) ? 0xff : 0x00 if([!]P[01].new[0]) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"p[01]=cmp.gt(Rs,Rt); if([!]p[01].new) jump:<hint>#r9:2","P[01]=(Rs>Rt) ? 0xff : 0x00 if([!]P[01].new[0]) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"p[01]=cmp.gtu(Rs,#U5); if([!]p[01].new) jump:<hint>#r9:2","P[01]=(Rs.uw[0]>#U) ? 0xff : 0x00 if([!]P[01].new[0]) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"p[01]=cmp.gtu(Rs,Rt); if([!]p[01].new) jump:<hint>#r9:2","P[01]=(Rs.uw[0]>Rt) ? 0xff : 0x00 if([!]P[01].new[0]) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"p[01]=tstbit(Rs,#0); if([!]p[01].new) jump:<hint>#r9:2","P[01]=(Rs & 1) ? 0xff : 0x00 if([!]P[01].new[0]) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+if ([!]Pu) jump #r15:2,"Assembler mapped to: ""if ([!]Pu)""""jump"""":nt """"#r15:2"""
+"if ([!]Pu) jump:<hint>#r15:2",";if ([!]Pu[0]) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;;};"
+jump #r22:2,"apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;"
+if ([!]Pu.new) jump:<hint> #r15:2,"if([!]Pu.new[0]){apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+if (Rs!=#0) jump:nt #r13:2,"if (Rs != 0) {PC=PC+#r;};"
+if (Rs!=#0) jump:t #r13:2,"if (Rs != 0) {PC=PC+#r;};"
+if (Rs<=#0) jump:nt #r13:2,"if (Rs<=0) {PC=PC+#r;};"
+if (Rs<=#0) jump:t #r13:2,"if (Rs<=0) {PC=PC+#r;};"
+if (Rs==#0) jump:nt #r13:2,"if (Rs == 0) {PC=PC+#r;};"
+if (Rs==#0) jump:t #r13:2,"if (Rs == 0) {PC=PC+#r;};"
+if (Rs>=#0) jump:nt #r13:2,"if (Rs>=0) {PC=PC+#r;};"
+if (Rs>=#0) jump:t #r13:2,"if (Rs>=0) {PC=PC+#r;};"
+Rd=#U6 ; jump #r9:2,"apply_extension(#r);#r=#r & ~0x3;Rd=#U;PC=PC+#r;"
+Rd=Rs ; jump #r9:2,"apply_extension(#r);#r=#r & ~0x3;Rd=Rs;PC=PC+#r;"
+Rdd=memd(Re=#U6),"apply_extension(#U);EA=#U;Rdd = *EA;Re=#U;"
+Rdd=memd(Rs+#s11:3),"apply_extension(#s);EA=Rs+#s;Rdd = *EA;"
+Rdd=memd(Rs+Rt<<#u2),"EA=Rs+(Rt<<#u);Rdd = *EA;"
+Rdd=memd(Rt<<#u2+#U6),"apply_extension(#U);EA=#U+(Rt<<#u);Rdd = *EA;"
+Rdd=memd(Rx++#s4:3),"EA=Rx;Rx=Rx+#s;Rdd = *EA;"
+Rdd=memd(Rx++#s4:3:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);Rdd = *EA;"
+Rdd=memd(Rx++I:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,I<<3,MuV);Rdd = *EA;"
+Rdd=memd(Rx++Mu),"EA=Rx;Rx=Rx+MuV;Rdd = *EA;"
+Rdd=memd(Rx++Mu:brev),"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;Rdd = *EA;"
+Rdd=memd(gp+#u16:3),"apply_extension(#u);EA=(Constant_extended ? (0) : GP)+#u;Rdd = *EA;"
+if ([!]Pt[.new]) Rdd=memd(#u6),"if ([!]Pt[.new][0]) {apply_extension(#u);EA=#u;Rdd = *EA;} else {NOP;};"
+if ([!]Pt[.new]) Rdd=memd(Rs+#u6:3),"if ([!]Pt[.new][0]) {apply_extension(#u);EA=Rs+#u;Rdd = *EA;} else {NOP;};"
+if ([!]Pt[.new]) Rdd=memd(Rx++#s4:3),"if([!]Pt[.new][0]){EA=Rx;Rx=Rx+#s;Rdd = *EA;} else {NOP;};"
+if ([!]Pv[.new]) Rdd=memd(Rs+Rt<<#u2),"if ([!]Pv[.new][0]) {EA=Rs+(Rt<<#u);Rdd = *EA;} else {NOP;};"
+Rd=memb(Re=#U6),"apply_extension(#U);EA=#U;Rd = *EA;Re=#U;"
+Rd=memb(Rs+#s11:0),"apply_extension(#s);EA=Rs+#s;Rd = *EA;"
+Rd=memb(Rs+Rt<<#u2),"EA=Rs+(Rt<<#u);Rd = *EA;"
+Rd=memb(Rt<<#u2+#U6),"apply_extension(#U);EA=#U+(Rt<<#u);Rd = *EA;"
+Rd=memb(Rx++#s4:0),"EA=Rx;Rx=Rx+#s;Rd = *EA;"
+Rd=memb(Rx++#s4:0:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);Rd = *EA;"
+Rd=memb(Rx++I:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,I<<0,MuV);Rd = *EA;"
+Rd=memb(Rx++Mu),"EA=Rx;Rx=Rx+MuV;Rd = *EA;"
+Rd=memb(Rx++Mu:brev),"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;Rd = *EA;"
+Rd=memb(gp+#u16:0),"apply_extension(#u);EA=(Constant_extended ? (0) : GP)+#u;Rd = *EA;"
+if ([!]Pt[.new]) Rd=memb(#u6),"if ([!]Pt[.new][0]) {apply_extension(#u);EA=#u;Rd = *EA;} else {NOP;};"
+if ([!]Pt[.new]) Rd=memb(Rs+#u6:0),"if ([!]Pt[.new][0]) {apply_extension(#u);EA=Rs+#u;Rd = *EA;} else {NOP;};"
+if ([!]Pt[.new]) Rd=memb(Rx++#s4:0),"if([!]Pt[.new][0]){EA=Rx;Rx=Rx+#s;Rd = *EA;} else {NOP;};"
+if ([!]Pv[.new]) Rd=memb(Rs+Rt<<#u2),"if ([!]Pv[.new][0]) {EA=Rs+(Rt<<#u);Rd = *EA;} else {NOP;};"
+Ryy=memb_fifo(Re=#U6),"apply_extension(#U);EA=#U;{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>8)|(tmpV<<56);};;Re=#U;"
+Ryy=memb_fifo(Rs),"Assembler mapped to:""Ryy=memb_fifo""""(Rs+#0)"""
+Ryy=memb_fifo(Rs+#s11:0),"apply_extension(#s);EA=Rs+#s;{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>8)|(tmpV<<56);};;"
+Ryy=memb_fifo(Rt<<#u2+#U6),"apply_extension(#U);EA=#U+(Rt<<#u);{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>8)|(tmpV<<56);};;"
+Ryy=memb_fifo(Rx++#s4:0),"EA=Rx;Rx=Rx+#s;{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>8)|(tmpV<<56);};;"
+Ryy=memb_fifo(Rx++#s4:0:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>8)|(tmpV<<56);};;"
+Ryy=memb_fifo(Rx++I:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,I<<0,MuV);{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>8)|(tmpV<<56);};;"
+Ryy=memb_fifo(Rx++Mu),"EA=Rx;Rx=Rx+MuV;{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>8)|(tmpV<<56);};;"
+Ryy=memb_fifo(Rx++Mu:brev),"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>8)|(tmpV<<56);};;"
+Ryy=memh_fifo(Re=#U6),"apply_extension(#U);EA=#U;{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>16)|(tmpV<<48);};;Re=#U;"
+Ryy=memh_fifo(Rs),"Assembler mapped to:""Ryy=memh_fifo""""(Rs+#0)"""
+Ryy=memh_fifo(Rs+#s11:1),"apply_extension(#s);EA=Rs+#s;{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>16)|(tmpV<<48);};;"
+Ryy=memh_fifo(Rt<<#u2+#U6),"apply_extension(#U);EA=#U+(Rt<<#u);{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>16)|(tmpV<<48);};;"
+Ryy=memh_fifo(Rx++#s4:1),"EA=Rx;Rx=Rx+#s;{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>16)|(tmpV<<48);};;"
+Ryy=memh_fifo(Rx++#s4:1:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>16)|(tmpV<<48);};;"
+Ryy=memh_fifo(Rx++I:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,I<<1,MuV);{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>16)|(tmpV<<48);};;"
+Ryy=memh_fifo(Rx++Mu),"EA=Rx;Rx=Rx+MuV;{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>16)|(tmpV<<48);};;"
+Ryy=memh_fifo(Rx++Mu:brev),"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;{tmpV = *EA;Ryy = (((size8u_t)Ryy)>>16)|(tmpV<<48);};;"
+Rd=memh(Re=#U6),"apply_extension(#U);EA=#U;Rd = *EA;Re=#U;"
+Rd=memh(Rs+#s11:1),"apply_extension(#s);EA=Rs+#s;Rd = *EA;"
+Rd=memh(Rs+Rt<<#u2),"EA=Rs+(Rt<<#u);Rd = *EA;"
+Rd=memh(Rt<<#u2+#U6),"apply_extension(#U);EA=#U+(Rt<<#u);Rd = *EA;"
+Rd=memh(Rx++#s4:1),"EA=Rx;Rx=Rx+#s;Rd = *EA;"
+Rd=memh(Rx++#s4:1:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);Rd = *EA;"
+Rd=memh(Rx++I:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,I<<1,MuV);Rd = *EA;"
+Rd=memh(Rx++Mu),"EA=Rx;Rx=Rx+MuV;Rd = *EA;"
+Rd=memh(Rx++Mu:brev),"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;Rd = *EA;"
+Rd=memh(gp+#u16:1),"apply_extension(#u);EA=(Constant_extended ? (0) : GP)+#u;Rd = *EA;"
+"if ([!]Pt[.new])Rd=memh(#u6)","if ([!]Pt[.new][0]) {apply_extension(#u);EA=#u;Rd = *EA;} else {NOP;};"
+"if ([!]Pt[.new])Rd=memh(Rs+#u6:1)","if ([!]Pt[.new][0]) {apply_extension(#u);EA=Rs+#u;Rd = *EA;} else {NOP;};"
+"if ([!]Pt[.new])Rd=memh(Rx++#s4:1)","if([!]Pt[.new][0]){EA=Rx;Rx=Rx+#s;Rd = *EA;} else {NOP;};"
+"if ([!]Pv[.new])Rd=memh(Rs+Rt<<#u2)","if ([!]Pv[.new][0]) {EA=Rs+(Rt<<#u);Rd = *EA;} else {NOP;};"
+Rd=memub(Re=#U6),"apply_extension(#U);EA=#U;Rd = *EA;Re=#U;"
+Rd=memub(Rs+#s11:0),"apply_extension(#s);EA=Rs+#s;Rd = *EA;"
+Rd=memub(Rs+Rt<<#u2),"EA=Rs+(Rt<<#u);Rd = *EA;"
+Rd=memub(Rt<<#u2+#U6),"apply_extension(#U);EA=#U+(Rt<<#u);Rd = *EA;"
+Rd=memub(Rx++#s4:0),"EA=Rx;Rx=Rx+#s;Rd = *EA;"
+Rd=memub(Rx++#s4:0:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);Rd = *EA;"
+Rd=memub(Rx++I:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,I<<0,MuV);Rd = *EA;"
+Rd=memub(Rx++Mu),"EA=Rx;Rx=Rx+MuV;Rd = *EA;"
+Rd=memub(Rx++Mu:brev),"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;Rd = *EA;"
+Rd=memub(gp+#u16:0),"apply_extension(#u);EA=(Constant_extended ? (0) : GP)+#u;Rd = *EA;"
+"if ([!]Pt[.new])Rd=memub(#u6)","if ([!]Pt[.new][0]) {apply_extension(#u);EA=#u;Rd = *EA;} else {NOP;};"
+"if ([!]Pt[.new])Rd=memub(Rs+#u6:0)","if ([!]Pt[.new][0]) {apply_extension(#u);EA=Rs+#u;Rd = *EA;} else {NOP;};"
+"if ([!]Pt[.new])Rd=memub(Rx++#s4:0)","if([!]Pt[.new][0]){EA=Rx;Rx=Rx+#s;Rd = *EA;} else {NOP;};"
+"if ([!]Pv[.new])Rd=memub(Rs+Rt<<#u2)","if ([!]Pv[.new][0]) {EA=Rs+(Rt<<#u);Rd = *EA;} else {NOP;};"
+Rd=memuh(Re=#U6),"apply_extension(#U);EA=#U;Rd = *EA;Re=#U;"
+Rd=memuh(Rs+#s11:1),"apply_extension(#s);EA=Rs+#s;Rd = *EA;"
+Rd=memuh(Rs+Rt<<#u2),"EA=Rs+(Rt<<#u);Rd = *EA;"
+Rd=memuh(Rt<<#u2+#U6),"apply_extension(#U);EA=#U+(Rt<<#u);Rd = *EA;"
+Rd=memuh(Rx++#s4:1),"EA=Rx;Rx=Rx+#s;Rd = *EA;"
+Rd=memuh(Rx++#s4:1:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);Rd = *EA;"
+Rd=memuh(Rx++I:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,I<<1,MuV);Rd = *EA;"
+Rd=memuh(Rx++Mu),"EA=Rx;Rx=Rx+MuV;Rd = *EA;"
+Rd=memuh(Rx++Mu:brev),"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;Rd = *EA;"
+Rd=memuh(gp+#u16:1),"apply_extension(#u);EA=(Constant_extended ? (0) : GP)+#u;Rd = *EA;"
+"if ([!]Pt[.new])Rd=memuh(#u6)","if ([!]Pt[.new][0]) {apply_extension(#u);EA=#u;Rd = *EA;} else {NOP;};"
+"if ([!]Pt[.new])Rd=memuh(Rs+#u6:1)","if ([!]Pt[.new][0]) {apply_extension(#u);EA=Rs+#u;Rd = *EA;} else {NOP;};"
+"if ([!]Pt[.new])Rd=memuh(Rx++#s4:1)","if([!]Pt[.new][0]){EA=Rx;Rx=Rx+#s;Rd = *EA;} else {NOP;};"
+"if ([!]Pv[.new])Rd=memuh(Rs+Rt<<#u2)","if ([!]Pv[.new][0]) {EA=Rs+(Rt<<#u);Rd = *EA;} else {NOP;};"
+Rd=memw(Re=#U6),"apply_extension(#U);EA=#U;Rd = *EA;Re=#U;"
+Rd=memw(Rs+#s11:2),"apply_extension(#s);EA=Rs+#s;Rd = *EA;"
+Rd=memw(Rs+Rt<<#u2),"EA=Rs+(Rt<<#u);Rd = *EA;"
+Rd=memw(Rt<<#u2+#U6),"apply_extension(#U);EA=#U+(Rt<<#u);Rd = *EA;"
+Rd=memw(Rx++#s4:2),"EA=Rx;Rx=Rx+#s;Rd = *EA;"
+Rd=memw(Rx++#s4:2:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);Rd = *EA;"
+Rd=memw(Rx++I:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,I<<2,MuV);Rd = *EA;"
+Rd=memw(Rx++Mu),"EA=Rx;Rx=Rx+MuV;Rd = *EA;"
+Rd=memw(Rx++Mu:brev),"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;Rd = *EA;"
+Rd=memw(gp+#u16:2),"apply_extension(#u);EA=(Constant_extended ? (0) : GP)+#u;Rd = *EA;"
+"if ([!]Pt[.new])Rd=memw(#u6)","if ([!]Pt[.new][0]) {apply_extension(#u);EA=#u;Rd = *EA;} else {NOP;};"
+"if ([!]Pt[.new])Rd=memw(Rs+#u6:2)","if ([!]Pt[.new][0]) {apply_extension(#u);EA=Rs+#u;Rd = *EA;} else {NOP;};"
+"if ([!]Pt[.new])Rd=memw(Rx++#s4:2)","if([!]Pt[.new][0]){EA=Rx;Rx=Rx+#s;Rd = *EA;} else {NOP;};"
+"if ([!]Pv[.new])Rd=memw(Rs+Rt<<#u2)","if ([!]Pv[.new][0]) {EA=Rs+(Rt<<#u);Rd = *EA;} else {NOP;};"
+deallocframe,"EA=FP;tmp = *EA;tmp = frame_unscramble(tmp);LR=tmp.w[1];FP=tmp.w[0];SP=EA+8;"
+dealloc_return,"EA=FP;tmp = *EA;tmp = frame_unscramble(tmp);LR=tmp.w[1];FP=tmp.w[0];SP=EA+8;PC=tmp.w[1];"
+if ([!]Ps) dealloc_return,";;if ([!]Ps[0]) {EA=FP;tmp = *EA;tmp = frame_unscramble(tmp);LR=tmp.w[1];FP=tmp.w[0];SP=EA+8;PC=tmp.w[1];} else {NOP;};"
+"if ([!]Ps.new)dealloc_return:nt",";if ([!]Ps.new[0]) {EA=FP;tmp = *EA;tmp = frame_unscramble(tmp);LR=tmp.w[1];FP=tmp.w[0];SP=EA+8;PC=tmp.w[1];} else {NOP;};"
+"if ([!]Ps.new)dealloc_return:t",";if ([!]Ps.new[0]) {EA=FP;tmp = *EA;tmp = frame_unscramble(tmp);LR=tmp.w[1];FP=tmp.w[0];SP=EA+8;PC=tmp.w[1];} else {NOP;};"
+Rd=membh(Re=#U6),"apply_extension(#U);EA=#U;{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.b[i];};};;Re=#U;"
+Rd=membh(Rs),"Assembler mapped to: ""Rd=membh""""(Rs+#0)"""
+Rd=membh(Rs+#s11:1),"apply_extension(#s);EA=Rs+#s;{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.b[i];};};;"
+Rd=membh(Rt<<#u2+#U6),"apply_extension(#U);EA=#U+(Rt<<#u);{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.b[i];};};;"
+Rd=membh(Rx++#s4:1),"EA=Rx;Rx=Rx+#s;{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.b[i];};};;"
+Rd=membh(Rx++#s4:1:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.b[i];};};;"
+Rd=membh(Rx++I:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,I<<1,MuV);{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.b[i];};};;"
+Rd=membh(Rx++Mu),"EA=Rx;Rx=Rx+MuV;{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.b[i];};};;"
+Rd=membh(Rx++Mu:brev),"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.b[i];};};;"
+Rd=memubh(Re=#U6),"apply_extension(#U);EA=#U;{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.ub[i];};};;Re=#U;"
+Rd=memubh(Rs+#s11:1),"apply_extension(#s);EA=Rs+#s;{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.ub[i];};};;"
+Rd=memubh(Rt<<#u2+#U6),"apply_extension(#U);EA=#U+(Rt<<#u);{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.ub[i];};};;"
+Rd=memubh(Rx++#s4:1),"EA=Rx;Rx=Rx+#s;{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.ub[i];};};;"
+Rd=memubh(Rx++#s4:1:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.ub[i];};};;"
+Rd=memubh(Rx++I:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,I<<1,MuV);{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.ub[i];};};;"
+Rd=memubh(Rx++Mu),"EA=Rx;Rx=Rx+MuV;{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.ub[i];};};;"
+Rd=memubh(Rx++Mu:brev),"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;{tmpV = *EA;for (i=0;i<2;i++) {Rd.h[i]=tmpV.ub[i];};};;"
+Rdd=membh(Re=#U6),"apply_extension(#U);EA=#U;{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.b[i];};};;Re=#U;"
+Rdd=membh(Rs),"Assembler mapped to: ""Rdd=membh""""(Rs+#0)"""
+Rdd=membh(Rs+#s11:2),"apply_extension(#s);EA=Rs+#s;{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.b[i];};};;"
+Rdd=membh(Rt<<#u2+#U6),"apply_extension(#U);EA=#U+(Rt<<#u);{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.b[i];};};;"
+Rdd=membh(Rx++#s4:2),"EA=Rx;Rx=Rx+#s;{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.b[i];};};;"
+Rdd=membh(Rx++#s4:2:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.b[i];};};;"
+Rdd=membh(Rx++I:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,I<<2,MuV);{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.b[i];};};;"
+Rdd=membh(Rx++Mu),"EA=Rx;Rx=Rx+MuV;{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.b[i];};};;"
+Rdd=membh(Rx++Mu:brev),"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.b[i];};};;"
+Rdd=memubh(Re=#U6),"apply_extension(#U);EA=#U;{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.ub[i];};};;Re=#U;"
+Rdd=memubh(Rs+#s11:2),"apply_extension(#s);EA=Rs+#s;{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.ub[i];};};;"
+Rdd=memubh(Rt<<#u2+#U6),"apply_extension(#U);EA=#U+(Rt<<#u);{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.ub[i];};};;"
+Rdd=memubh(Rx++#s4:2),"EA=Rx;Rx=Rx+#s;{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.ub[i];};};;"
+Rdd=memubh(Rx++#s4:2:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.ub[i];};};;"
+Rdd=memubh(Rx++I:circ(Mu)),"EA=Rx;Rx=Rx=circ_add(Rx,I<<2,MuV);{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.ub[i];};};;"
+Rdd=memubh(Rx++Mu),"EA=Rx;Rx=Rx+MuV;{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.ub[i];};};;"
+Rdd=memubh(Rx++Mu:brev),"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;{tmpV = *EA;for (i=0;i<4;i++) {Rdd.h[i]=tmpV.ub[i];};};;"
+memb(Rs+#u6:0)=clrbit(#U5),"apply_extension(#u);EA=Rs+#u;tmp = *EA;tmp &= (~(1<<#U));*EA = tmp;"
+memb(Rs+#u6:0)=setbit(#U5),"apply_extension(#u);EA=Rs+#u;tmp = *EA;tmp |= (1<<#U);*EA = tmp;"
+memb(Rs+#u6:0)[+-]=#U5,"apply_extension(#u);EA=Rs[+-]#u;tmp = *EA;tmp [+-]= #U;*EA = tmp;"
+memb(Rs+#u6:0)[+-]=Rt,"apply_extension(#u);EA=Rs+#u;tmp = *EA;tmp [+-]= Rt;*EA = tmp;"
+memb(Rs+#u6:0)[|&]=Rt,"apply_extension(#u);EA=Rs+#u;tmp = *EA;tmp [|&]= Rt;*EA = tmp;"
+memh(Rs+#u6:1)=clrbit(#U5),"apply_extension(#u);EA=Rs+#u;tmp = *EA;tmp &= (~(1<<#U));*EA = tmp;"
+memh(Rs+#u6:1)=setbit(#U5),"apply_extension(#u);EA=Rs+#u;tmp = *EA;tmp |= (1<<#U);*EA = tmp;"
+memh(Rs+#u6:1)[+-]=#U5,"apply_extension(#u);EA=Rs[+-]#u;tmp = *EA;tmp [+-]= #U;*EA = tmp;"
+memh(Rs+#u6:1)[+-]=Rt,"apply_extension(#u);EA=Rs+#u;tmp = *EA;tmp [+-]= Rt;*EA = tmp;"
+memh(Rs+#u6:1)[|&]=Rt,"apply_extension(#u);EA=Rs+#u;tmp = *EA;tmp [|&]= Rt;*EA = tmp;"
+memw(Rs+#u6:2)=clrbit(#U5),"apply_extension(#u);EA=Rs+#u;tmp = *EA;tmp &= (~(1<<#U));*EA = tmp;"
+memw(Rs+#u6:2)=setbit(#U5),"apply_extension(#u);EA=Rs+#u;tmp = *EA;tmp |= (1<<#U);*EA = tmp;"
+memw(Rs+#u6:2)[+-]=#U5,"apply_extension(#u);EA=Rs[+-]#u;tmp = *EA;tmp [+-]= #U;*EA = tmp;"
+memw(Rs+#u6:2)[+-]=Rt,"apply_extension(#u);EA=Rs+#u;tmp = *EA;tmp [+-]= Rt;*EA = tmp;"
+memw(Rs+#u6:2)[|&]=Rt,"apply_extension(#u);EA=Rs+#u;tmp = *EA;tmp [|&]= Rt;*EA = tmp;"
+"if ([!]cmp.eq(Ns.new,#-1))jump:<hint> #r9:2",";if ((Ns.new[!]=(-1))) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"if ([!]cmp.eq(Ns.new,#U5))jump:<hint> #r9:2",";if ((Ns.new[!]=(#U))) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"if ([!]cmp.eq(Ns.new,Rt))jump:<hint> #r9:2",";if ((Ns.new[!]=Rt)) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"if ([!]cmp.gt(Ns.new,#-1))jump:<hint> #r9:2",";if ([!](Ns.new>(-1))) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"if ([!]cmp.gt(Ns.new,#U5))jump:<hint> #r9:2",";if ([!](Ns.new>(#U))) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"if ([!]cmp.gt(Ns.new,Rt))jump:<hint> #r9:2",";if ([!](Ns.new>Rt)) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"if ([!]cmp.gt(Rt,Ns.new))jump:<hint> #r9:2",";if ([!](Rt>Ns.new)) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"if ([!]cmp.gtu(Ns.new,#U5))jump:<hint> #r9:2",";if ([!](Ns.new.uw[0]>(#U))) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"if ([!]cmp.gtu(Ns.new,Rt))jump:<hint> #r9:2",";if ([!](Ns.new.uw[0]>Rt.uw[0])) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"if ([!]cmp.gtu(Rt,Ns.new))jump:<hint> #r9:2",";if ([!](Rt.uw[0]>Ns.new.uw[0])) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+"if ([!]tstbit(Ns.new,#0))jump:<hint> #r9:2",";if ([!]((Ns.new) & 1)) {apply_extension(#r);#r=#r & ~0x3;PC=PC+#r;};"
+memb(Re=#U6)=Nt.new,"apply_extension(#U);EA=#U;*EA = Nt.new&0xff;Re=#U;"
+memb(Rs+#s11:0)=Nt.new,"apply_extension(#s);EA=Rs+#s;*EA = Nt.new&0xff;"
+memb(Rs+Ru<<#u2)=Nt.new,"EA=Rs+(Ru<<#u);*EA = Nt.new&0xff;"
+memb(Ru<<#u2+#U6)=Nt.new,"apply_extension(#U);EA=#U+(Ru<<#u);*EA = Nt.new&0xff;"
+memb(Rx++#s4:0)=Nt.new,"EA=Rx;Rx=Rx+#s;*EA = Nt.new&0xff;"
+memb(Rx++#s4:0:circ(Mu))=Nt.new,"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);*EA = Nt.new&0xff;"
+memb(Rx++I:circ(Mu))=Nt.new,"EA=Rx;Rx=Rx=circ_add(Rx,I<<0,MuV);*EA = Nt.new&0xff;"
+memb(Rx++Mu)=Nt.new,"EA=Rx;Rx=Rx+MuV;*EA = Nt.new&0xff;"
+memb(Rx++Mu:brev)=Nt.new,"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;*EA = Nt.new&0xff;"
+memb(gp+#u16:0)=Nt.new,"apply_extension(#u);EA=(Constant_extended ? (0) : GP)+#u;*EA = Nt.new&0xff;"
+"if ([!]Pv[.new])memb(#u6)=Nt.new","if ([!]Pv[.new][0]) {apply_extension(#u);EA=#u;*EA = Nt[.new]&0xff;} else {NOP;};"
+"if ([!]Pv[.new])memb(Rs+#u6:0)=Nt.new","apply_extension(#u);if ([!]Pv[.new][0]) {EA=Rs+#u;*EA = Nt[.new]&0xff;} else {NOP;};"
+"if ([!]Pv[.new])memb(Rs+Ru<<#u2)=Nt.new","if ([!]Pv[.new][0]) {EA=Rs+(Ru<<#u);*EA = Nt[.new]&0xff;} else {NOP;};"
+"if ([!]Pv[.new])memb(Rx++#s4:0)=Nt.new","if ([!]Pv[.new][0]){EA=Rx;Rx=Rx+#s;*EA = Nt[.new]&0xff;} else {NOP;};"
+memh(Re=#U6)=Nt.new,"apply_extension(#U);EA=#U;*EA = Nt.new.h[0];Re=#U;"
+memh(Rs+#s11:1)=Nt.new,"apply_extension(#s);EA=Rs+#s;*EA = Nt.new.h[0];"
+memh(Rs+Ru<<#u2)=Nt.new,"EA=Rs+(Ru<<#u);*EA = Nt.new.h[0];"
+memh(Ru<<#u2+#U6)=Nt.new,"apply_extension(#U);EA=#U+(Ru<<#u);*EA = Nt.new.h[0];"
+memh(Rx++#s4:1)=Nt.new,"EA=Rx;Rx=Rx+#s;*EA = Nt.new.h[0];"
+memh(Rx++#s4:1:circ(Mu))=Nt.new,"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);*EA = Nt.new.h[0];"
+memh(Rx++I:circ(Mu))=Nt.new,"EA=Rx;Rx=Rx=circ_add(Rx,I<<1,MuV);*EA = Nt.new.h[0];"
+memh(Rx++Mu)=Nt.new,"EA=Rx;Rx=Rx+MuV;*EA = Nt.new.h[0];"
+memh(Rx++Mu:brev)=Nt.new,"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;*EA = Nt.new.h[0];"
+memh(gp+#u16:1)=Nt.new,"apply_extension(#u);EA=(Constant_extended ? (0) : GP)+#u;*EA = Nt.new.h[0];"
+"if ([!]Pv[.new])memh(#u6)=Nt.new","if ([!]Pv[.new][0]) {apply_extension(#u);EA=#u;*EA = Nt[.new].h[0];} else {NOP;};"
+"if ([!]Pv[.new])memh(Rs+#u6:1)=Nt.new","apply_extension(#u);if ([!]Pv[.new][0]) {EA=Rs+#u;*EA = Nt[.new].h[0];} else {NOP;};"
+"if ([!]Pv[.new])memh(Rs+Ru<<#u2)=Nt.new","if ([!]Pv[.new][0]) {EA=Rs+(Ru<<#u);*EA = Nt[.new].h[0];} else {NOP;};"
+"if ([!]Pv[.new])memh(Rx++#s4:1)=Nt.new","if ([!]Pv[.new][0]){EA=Rx;Rx=Rx+#s;*EA = Nt[.new].h[0];} else {NOP;};"
+memw(Re=#U6)=Nt.new,"apply_extension(#U);EA=#U;*EA = Nt.new;Re=#U;"
+memw(Rs+#s11:2)=Nt.new,"apply_extension(#s);EA=Rs+#s;*EA = Nt.new;"
+memw(Rs+Ru<<#u2)=Nt.new,"EA=Rs+(Ru<<#u);*EA = Nt.new;"
+memw(Ru<<#u2+#U6)=Nt.new,"apply_extension(#U);EA=#U+(Ru<<#u);*EA = Nt.new;"
+memw(Rx++#s4:2)=Nt.new,"EA=Rx;Rx=Rx+#s;*EA = Nt.new;"
+memw(Rx++#s4:2:circ(Mu))=Nt.new,"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);*EA = Nt.new;"
+memw(Rx++I:circ(Mu))=Nt.new,"EA=Rx;Rx=Rx=circ_add(Rx,I<<2,MuV);*EA = Nt.new;"
+memw(Rx++Mu)=Nt.new,"EA=Rx;Rx=Rx+MuV;*EA = Nt.new;"
+memw(Rx++Mu:brev)=Nt.new,"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;*EA = Nt.new;"
+memw(gp+#u16:2)=Nt.new,"apply_extension(#u);EA=(Constant_extended ? (0) : GP)+#u;*EA = Nt.new;"
+"if ([!]Pv[.new])memw(#u6)=Nt.new","if ([!]Pv[.new][0]) {apply_extension(#u);EA=#u;*EA = Nt[.new];} else {NOP;};"
+"if ([!]Pv[.new])memw(Rs+#u6:2)=Nt.new","apply_extension(#u);if ([!]Pv[.new][0]) {EA=Rs+#u;*EA = Nt[.new];} else {NOP;};"
+"if ([!]Pv[.new])memw(Rs+Ru<<#u2)=Nt.new","if ([!]Pv[.new][0]) {EA=Rs+(Ru<<#u);*EA = Nt[.new];} else {NOP;};"
+"if ([!]Pv[.new])memw(Rx++#s4:2)=Nt.new","if ([!]Pv[.new][0]){EA=Rx;Rx=Rx+#s;*EA = Nt[.new];} else {NOP;};"
+memd(Re=#U6)=Rtt,"apply_extension(#U);EA=#U;*EA = Rtt;Re=#U;"
+memd(Rs+#s11:3)=Rtt,"apply_extension(#s);EA=Rs+#s;*EA = Rtt;"
+memd(Rs+Ru<<#u2)=Rtt,"EA=Rs+(Ru<<#u);*EA = Rtt;"
+memd(Ru<<#u2+#U6)=Rtt,"apply_extension(#U);EA=#U+(Ru<<#u);*EA = Rtt;"
+memd(Rx++#s4:3)=Rtt,"EA=Rx;Rx=Rx+#s;*EA = Rtt;"
+memd(Rx++#s4:3:circ(Mu))=Rtt,"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);*EA = Rtt;"
+memd(Rx++I:circ(Mu))=Rtt,"EA=Rx;Rx=Rx=circ_add(Rx,I<<3,MuV);*EA = Rtt;"
+memd(Rx++Mu)=Rtt,"EA=Rx;Rx=Rx+MuV;*EA = Rtt;"
+memd(Rx++Mu:brev)=Rtt,"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;*EA = Rtt;"
+memd(gp+#u16:3)=Rtt,"apply_extension(#u);EA=(Constant_extended ? (0) : GP)+#u;*EA = Rtt;"
+"if ([!]Pv[.new])memd(#u6)=Rtt","if ([!]Pv[.new][0]) {apply_extension(#u);EA=#u;*EA = Rtt;} else {NOP;};"
+"if ([!]Pv[.new])memd(Rs+#u6:3)=Rtt","apply_extension(#u);if ([!]Pv[.new][0]) {EA=Rs+#u;*EA = Rtt;} else {NOP;};"
+"if ([!]Pv[.new])memd(Rs+Ru<<#u2)=Rtt","if ([!]Pv[.new][0]) {EA=Rs+(Ru<<#u);*EA = Rtt;} else {NOP;};"
+"if ([!]Pv[.new])memd(Rx++#s4:3)=Rtt","if ([!]Pv[.new][0]){EA=Rx;Rx=Rx+#s;*EA = Rtt;} else {NOP;};"
+memb(Re=#U6)=Rt,"apply_extension(#U);EA=#U;*EA = Rt&0xff;Re=#U;"
+memb(Rs+#s11:0)=Rt,"apply_extension(#s);EA=Rs+#s;*EA = Rt&0xff;"
+memb(Rs+#u6:0)=#S8,"EA=Rs+#u;apply_extension(#S);*EA = #S;"
+memb(Rs+Ru<<#u2)=Rt,"EA=Rs+(Ru<<#u);*EA = Rt&0xff;"
+memb(Ru<<#u2+#U6)=Rt,"apply_extension(#U);EA=#U+(Ru<<#u);*EA = Rt&0xff;"
+memb(Rx++#s4:0)=Rt,"EA=Rx;Rx=Rx+#s;*EA = Rt&0xff;"
+memb(Rx++#s4:0:circ(Mu))=Rt,"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);*EA = Rt&0xff;"
+memb(Rx++I:circ(Mu))=Rt,"EA=Rx;Rx=Rx=circ_add(Rx,I<<0,MuV);*EA = Rt&0xff;"
+memb(Rx++Mu)=Rt,"EA=Rx;Rx=Rx+MuV;*EA = Rt&0xff;"
+memb(Rx++Mu:brev)=Rt,"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;*EA = Rt&0xff;"
+memb(gp+#u16:0)=Rt,"apply_extension(#u);EA=(Constant_extended ? (0) : GP)+#u;*EA = Rt&0xff;"
+"if ([!]Pv[.new])memb(#u6)=Rt","if ([!]Pv[.new][0]) {apply_extension(#u);EA=#u;*EA = Rt&0xff;} else {NOP;};"
+"if ([!]Pv[.new])memb(Rs+#u6:0)=#S6","if ([!]Pv[.new][0]){EA=Rs+#u;apply_extension(#S);*EA = #S;} else {NOP;};"
+"if ([!]Pv[.new])memb(Rs+#u6:0)=Rt","apply_extension(#u);if ([!]Pv[.new][0]) {EA=Rs+#u;*EA = Rt&0xff;} else {NOP;};"
+"if ([!]Pv[.new])memb(Rs+Ru<<#u2)=Rt","if ([!]Pv[.new][0]) {EA=Rs+(Ru<<#u);*EA = Rt&0xff;} else {NOP;};"
+"if ([!]Pv[.new])memb(Rx++#s4:0)=Rt","if ([!]Pv[.new][0]){EA=Rx;Rx=Rx+#s;*EA = Rt&0xff;} else {NOP;};"
+memh(Re=#U6)=Rt.H,"apply_extension(#U);EA=#U;*EA = Rt.h[1];Re=#U;"
+memh(Re=#U6)=Rt,"apply_extension(#U);EA=#U;*EA = Rt.h[0];Re=#U;"
+memh(Rs+#s11:1)=Rt.H,"apply_extension(#s);EA=Rs+#s;*EA = Rt.h[1];"
+memh(Rs+#s11:1)=Rt,"apply_extension(#s);EA=Rs+#s;*EA = Rt.h[0];"
+memh(Rs+#u6:1)=#S8,"EA=Rs+#u;apply_extension(#S);*EA = #S;"
+memh(Rs+Ru<<#u2)=Rt.H,"EA=Rs+(Ru<<#u);*EA = Rt.h[1];"
+memh(Rs+Ru<<#u2)=Rt,"EA=Rs+(Ru<<#u);*EA = Rt.h[0];"
+memh(Ru<<#u2+#U6)=Rt.H,"apply_extension(#U);EA=#U+(Ru<<#u);*EA = Rt.h[1];"
+memh(Ru<<#u2+#U6)=Rt,"apply_extension(#U);EA=#U+(Ru<<#u);*EA = Rt.h[0];"
+memh(Rx++#s4:1)=Rt.H,"EA=Rx;Rx=Rx+#s;*EA = Rt.h[1];"
+memh(Rx++#s4:1)=Rt,"EA=Rx;Rx=Rx+#s;*EA = Rt.h[0];"
+memh(Rx++#s4:1:circ(Mu))=Rt.H,"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);*EA = Rt.h[1];"
+memh(Rx++#s4:1:circ(Mu))=Rt,"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);*EA = Rt.h[0];"
+memh(Rx++I:circ(Mu))=Rt.H,"EA=Rx;Rx=Rx=circ_add(Rx,I<<1,MuV);*EA = Rt.h[1];"
+memh(Rx++I:circ(Mu))=Rt,"EA=Rx;Rx=Rx=circ_add(Rx,I<<1,MuV);*EA = Rt.h[0];"
+memh(Rx++Mu)=Rt.H,"EA=Rx;Rx=Rx+MuV;*EA = Rt.h[1];"
+memh(Rx++Mu)=Rt,"EA=Rx;Rx=Rx+MuV;*EA = Rt.h[0];"
+memh(Rx++Mu:brev)=Rt.H,"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;*EA = Rt.h[1];"
+memh(Rx++Mu:brev)=Rt,"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;*EA = Rt.h[0];"
+memh(gp+#u16:1)=Rt.H,"apply_extension(#u);EA=(Constant_extended ? (0) : GP)+#u;*EA = Rt.h[1];"
+memh(gp+#u16:1)=Rt,"apply_extension(#u);EA=(Constant_extended ? (0) : GP)+#u;*EA = Rt.h[0];"
+"if ([!]Pv[.new])memh(#u6)=Rt.H","if ([!]Pv[.new][0]) {apply_extension(#u);EA=#u;*EA = Rt.h[1];} else {NOP;};"
+"if ([!]Pv[.new])memh(#u6)=Rt","if ([!]Pv[.new][0]) {apply_extension(#u);EA=#u;*EA = Rt.h[0];} else {NOP;};"
+"if ([!]Pv[.new])memh(Rs+#u6:1)=#S6","if ([!]Pv[.new][0]){EA=Rs+#u;apply_extension(#S);*EA = #S;} else {NOP;};"
+"if ([!]Pv[.new])memh(Rs+#u6:1)=Rt.H","apply_extension(#u);if ([!]Pv[.new][0]) {EA=Rs+#u;*EA = Rt.h[1];} else {NOP;};"
+"if ([!]Pv[.new])memh(Rs+#u6:1)=Rt","apply_extension(#u);if ([!]Pv[.new][0]) {EA=Rs+#u;*EA = Rt.h[0];} else {NOP;};"
+"if ([!]Pv[.new])memh(Rs+Ru<<#u2)=Rt.H","if ([!]Pv[.new][0]) {EA=Rs+(Ru<<#u);*EA = Rt.h[1];} else {NOP;};"
+"if ([!]Pv[.new])memh(Rs+Ru<<#u2)=Rt","if ([!]Pv[.new][0]) {EA=Rs+(Ru<<#u);*EA = Rt.h[0];} else {NOP;};"
+"if ([!]Pv[.new])memh(Rx++#s4:1)=Rt.H","if ([!]Pv[.new][0]){EA=Rx;Rx=Rx+#s;*EA = Rt.h[1];} else {NOP;};"
+"if ([!]Pv[.new])memh(Rx++#s4:1)=Rt","if ([!]Pv[.new][0]){EA=Rx;Rx=Rx+#s;*EA = Rt.h[0];} else {NOP;};"
+memw(Re=#U6)=Rt,"apply_extension(#U);EA=#U;*EA = Rt;Re=#U;"
+memw(Rs+#s11:2)=Rt,"apply_extension(#s);EA=Rs+#s;*EA = Rt;"
+memw(Rs+#u6:2)=#S8,"EA=Rs+#u;apply_extension(#S);*EA = #S;"
+memw(Rs+Ru<<#u2)=Rt,"EA=Rs+(Ru<<#u);*EA = Rt;"
+memw(Ru<<#u2+#U6)=Rt,"apply_extension(#U);EA=#U+(Ru<<#u);*EA = Rt;"
+memw(Rx++#s4:2)=Rt,"EA=Rx;Rx=Rx+#s;*EA = Rt;"
+memw(Rx++#s4:2:circ(Mu))=Rt,"EA=Rx;Rx=Rx=circ_add(Rx,#s,MuV);*EA = Rt;"
+memw(Rx++I:circ(Mu))=Rt,"EA=Rx;Rx=Rx=circ_add(Rx,I<<2,MuV);*EA = Rt;"
+memw(Rx++Mu)=Rt,"EA=Rx;Rx=Rx+MuV;*EA = Rt;"
+memw(Rx++Mu:brev)=Rt,"EA=Rx.h[1] | brev(Rx.h[0]);Rx=Rx+MuV;*EA = Rt;"
+memw(gp+#u16:2)=Rt,"apply_extension(#u);EA=(Constant_extended ? (0) : GP)+#u;*EA = Rt;"
+"if ([!]Pv[.new])memw(#u6)=Rt","if ([!]Pv[.new][0]) {apply_extension(#u);EA=#u;*EA = Rt;} else {NOP;};"
+"if ([!]Pv[.new])memw(Rs+#u6:2)=#S6","if ([!]Pv[.new][0]){EA=Rs+#u;apply_extension(#S);*EA = #S;} else {NOP;};"
+"if ([!]Pv[.new])memw(Rs+#u6:2)=Rt","apply_extension(#u);if ([!]Pv[.new][0]) {EA=Rs+#u;*EA = Rt;} else {NOP;};"
+"if ([!]Pv[.new])memw(Rs+Ru<<#u2)=Rt","if ([!]Pv[.new][0]) {EA=Rs+(Ru<<#u);*EA = Rt;} else {NOP;};"
+"if ([!]Pv[.new])memw(Rx++#s4:2)=Rt","if ([!]Pv[.new][0]){EA=Rx;Rx=Rx+#s;*EA = Rt;} else {NOP;};"
+allocframe(#u11:3),"EA=SP-8;*EA=frame_scramble((zxt32->64(LR) << 32) | zxt32->64(FP));FP=EA;frame_check_limit(EA-#u);SP=EA-#u;"
+Gd=Rs,Gd=Rs;
+Gdd=Rss,Gdd=Rss;
+Rd=Gs,Rd=Gs;
+Rdd=Gss,Rdd=Gss;
+ciad(Rs),IAD &= ~Rs;
+"crswap(Rx,sgp)","Assembler mapped to: ""crswap(Rx,sgp0)"""
+"crswap(Rx,sgp0)","tmp = Rx;Rx = SGP0;SGP0 = tmp;"
+"crswap(Rx,sgp1)","tmp = Rx;Rx = SGP1;SGP1 = tmp;"
+"crswap(Rxx,sgp1:0)","tmp = Rxx;Rxx=SGP;SGP = tmp;"
+cswi(Rs),IPEND &= ~Rs;
+dckill,dcache_inv_all();
+Rd=dctagr(Rs),dcache_tag_read(Rs);
+dccleanidx(Rs),dcache_clean_idx(Rs);
+dccleaninvidx(Rs),"dcache_clean_idx(Rs);dcache_inv_idx(Rs);"
+dcinvidx(Rs),dcache_inv_idx(Rs);
+"dctagw(Rs,Rt)","dcache_tag_write(Rs,Rt);"
+Rd=getimask(Rs),Rd=IMASK[Rs&0x7];
+k0lock,"if (can_aquire_k0_lock) {SYSCFG.K0LOCK = 1;} else {sleep_until_available;};"
+tlblock,"if (can_aquire_tlb_lock) {SYSCFG.TLBLOCK = 1;} else {sleep_until_available;};"
+k0unlock,SYSCFG.K0LOCK = 0;
+tlbunlock,SYSCFG.TLBLOCK = 0;
+Rd=iassignr(Rs),Rd=IASSIGNR(Rs);
+iassignw(Rs),IASSIGNW(Rs);
+Rd=icdatar(Rs),icache_data_read(Rs);
+Rd=ictagr(Rs),icache_tag_read(Rs);
+icinvidx(Rs),icache_inv_idx(Rs);
+ickill,icache_inv_all();
+"ictagw(Rs,Rt)","icache_tag_write(Rs,Rt);"
+l2cleanidx(Rs),l2cache_clean_idx(Rs);
+l2cleaninvidx(Rs),l2cache_clean_invalidate_idx(Rs);
+l2invidx(Rs),l2cache_inv_idx(Rs);
+l2gclean,l2cache_global_clean();
+l2gclean(Rtt),l2cache_global_clean_range(Rtt);
+l2gcleaninv,l2cache_global_clean_inv();
+l2gcleaninv(Rtt),l2cache_global_clean_inv_range(Rtt);
+l2gunlock,l2cache_global_unlock();
+l2kill,l2cache_inv_all();
+Pd=l2locka(Rs),"EA=Rs;Pd=l2locka(EA);"
+l2unlocka(Rs),"EA=Rs;l2unlocka(EA);"
+Rd=l2tagr(Rs),l2cache_tag_read(Rs);
+"l2tagw(Rs,Rt)","l2cache_tag_write(Rs,Rt);"
+"Rd=memw_phys(Rs,Rt)",Rd = *((Rs&0x7ff) | (Rt<<11));
+nmi(Rs),Raise NMI on threads;
+resume(Rs),"for (i = 0; i < THREADS_MAX; i++) {if (Rs.i) {modectl[(i+16)] = 0;};};"
+rte,"SSR.SSR_EX = 0;PC=ELR;"
+rteunlock,"SSR.SSR_EX = 0;SYSCFG.TLBLOCK = 0;PC=ELR;"
+"setimask(Pt,Rs)",IMASK[Pt&0x7]=Rs;
+siad(Rs),IAD |= Rs;
+start(Rs),"for (i = 0; i < THREADS_MAX; i++) {if (Rs.i && (modectl[i] == 0)) {modectl[i] = 1;reset_thread(i);};};"
+stop(Rs),if (!in_debug_mode) modectl[TNUM] = 0;
+swi(Rs),IPEND |= Rs;
+"Rd=ctlbw(Rss,Rt)","if (CHECK_TLB_OVERLAP((1LL<<63) | Rss)) {Rd=GET_OVERLAPPING_IDX((1LL<<63) |Rss);} else {TLB[Rt] = Rss;Rd=0x80000000;};"
+Rd=tlboc(Rss),"if (CHECK_TLB_OVERLAP((1LL<<63) | Rss)) {Rd=GET_OVERLAPPING_IDX((1LL<<63) |Rss);} else {Rd=0x80000000;};"
+Rd=tlbp(Rs),Rd=search_TLB(Rs);
+Rdd=tlbr(Rs),Rdd = TLB[Rs];
+tlbinvasid(Rs),"for (i = 0; i < NUM_TLB_ENTRIES; i++) {if ((TLB[i].PTE_G == 0) &&(TLB[i].PTE_ASID == Rs[26:20])) {TLB[i] = TLB[i] & ~(1ULL << 63);};};"
+"tlbw(Rss,Rt)",TLB[Rt] = Rss;
+Rd=Ss,Rd=Ss;
+Rdd=Sss,Rdd=Sss;
+Sd=Rs,Sd=Rs;
+Sdd=Rss,Sdd=Rss;
+wait(Rs),if (!in_debug_mode) modectl[(TNUM+16)] = 1;
+Rd=memw_locked(Rs),"EA=Rs;Rd = *EA;"
+Rdd=memd_locked(Rs),"EA=Rs;Rdd = *EA;"
+"memd_locked(Rs,Pd)=Rtt","EA=Rs;if (lock_valid) {*EA = Rtt;Pd = 0xff;lock_valid = 0;} else {Pd = 0;};"
+"memw_locked(Rs,Pd)=Rt","EA=Rs;if (lock_valid) {*EA = Rt;Pd = 0xff;lock_valid = 0;} else {Pd = 0;};"
+dczeroa(Rs),"EA=Rs;dcache_zero_addr(EA);"
+barrier,memory_barrier;
+brkpt,Enter debug mode;
+dcfetch(Rs),"Assembler mapped to: ""dcfetch(Rs+#0)"""
+dcfetch(Rs+#u11:3),"EA=Rs+#u;dcache_fetch(EA);"
+dccleana(Rs),"EA=Rs;dcache_clean_addr(EA);"
+dccleaninva(Rs),"EA=Rs;dcache_cleaninv_addr(EA);"
+dcinva(Rs),"EA=Rs;dcache_cleaninv_addr(EA);"
+icinva(Rs),"EA=Rs;icache_inv_addr(EA);"
+isync,instruction_sync;
+"l2fetch(Rs,Rt)","l2fetch(Rs,INFO);"
+"l2fetch(Rs,Rtt)","l2fetch(Rs,INFO);"
+pause(#u8),Pause for #u cycles;
+syncht,memory_synch;
+trace(Rs),Send value to ETM trace;
+trap0(#u8),"SSR.CAUSE = #u;TRAP ""0"";"
+trap1(#u8),"SSR.CAUSE = #u;TRAP ""1"";"
+Rdd=abs(Rss),Rdd = ABS(Rss);
+Rd=abs(Rs)[:sat],Rd = [sat32](ABS(sxt32->64(Rs)));
+"Rd=add(Rs,add(Ru,#s6))",Rd = Rs + Ru + apply_extension(#s);
+"Rd=add(Rs,sub(#u6,Ru))",Rd = Rs - Ru + apply_extension(#u);
+"Rx+=add(Rs,#s8)","apply_extension(#s);Rx=Rx + Rs + #s;"
+"Rx+=add(Rs,Rt)",Rx=Rx + Rs + Rt;
+"Rx-=add(Rs,#s8)","apply_extension(#s);Rx=Rx - (Rs + #s);"
+"Rx-=add(Rs,Rt)",Rx=Rx - (Rs + Rt);
+"Rd=add(Rs,Rt):sat:deprecated",Rd=sat32(Rs+Rt);
+"Rdd=add(Rs,Rtt)","if (""Rs & 1"") {Assembler mapped to:""Rdd=add(Rss,Rtt):raw:hi"";} else {Assembler mapped to:""Rdd=add(Rss,Rtt):raw:lo"";};"
+"Rdd=add(Rss,Rtt)",Rdd=Rss+Rtt;
+"Rdd=add(Rss,Rtt):raw:hi",Rdd=Rtt+sxt32->64(Rss.w[1]);
+"Rdd=add(Rss,Rtt):raw:lo",Rdd=Rtt+sxt32->64(Rss.w[0]);
+"Rdd=add(Rss,Rtt):sat",Rdd=sat64(Rss+Rtt);
+"Rd=add(Rt.L,Rs.[HL])[:sat]",Rd=[sat16](Rt.h[0]+Rs.h[01]);
+"Rd=add(Rt.[HL],Rs.[HL])[:sat]:<<16",Rd=([sat16](Rt.h[01]+Rs.h[01]))<<16;
+"Rdd=add(Rss,Rtt,Px):carry","Rdd = Rss + Rtt + Px[0];Px = carry_from_add(Rss,Rtt,Px[0]) ? 0xff :0x00;"
+"Rdd=sub(Rss,Rtt,Px):carry","Rdd = Rss + ~Rtt + Px[0];Px = carry_from_add(Rss,~Rtt,Px[0]) ? 0xff: 0x00;"
+"Rdd=and(Rss,Rtt)",Rdd=Rss&Rtt;
+"Rdd=and(Rtt,~Rss)",Rdd = (Rtt & ~Rss);
+Rdd=not(Rss),Rdd=~Rss;
+"Rdd=or(Rss,Rtt)",Rdd=Rss|Rtt;
+"Rdd=or(Rtt,~Rss)",Rdd = (Rtt | ~Rss);
+"Rdd=xor(Rss,Rtt)",Rdd=Rss^Rtt;
+"Rxx^=xor(Rss,Rtt)",Rxx^=Rss^Rtt;
+"Rx=or(Ru,and(Rx,#s10))",Rx = Ru | (Rx & apply_extension(#s));
+"Rx[&|]=and(Rs,Rt)",Rx [|&]= (Rs [|&] Rt);
+"Rx^=and(Rs,Rt)",Rx ^= (Rs ^ Rt);
+"Rx[&|]=and(Rs,~Rt)",Rx [|&]= (Rs [|&] ~Rt);
+"Rx^=and(Rs,~Rt)",Rx ^= (Rs ^ ~Rt);
+"Rx[&|]=or(Rs,Rt)",Rx [|&]= (Rs [|&] Rt);
+"Rx^=or(Rs,Rt)",Rx ^= (Rs ^ Rt);
+"Rx[&|]=xor(Rs,Rt)",Rx[|&]=Rs[|&]Rt;
+"Rx^=xor(Rs,Rt)",Rx^=Rs^Rt;
+"Rx|=and(Rs,#s10)",Rx = Rx | (Rs & apply_extension(#s));
+"Rx|=or(Rs,#s10)",Rx = Rx | (Rs | apply_extension(#s));
+"Rd=max(Rs,Rt)","Rd = max(Rs,Rt);"
+"Rd=maxu(Rs,Rt)","Rd = max(Rs.uw[0],Rt.uw[0]);"
+"Rdd=max(Rss,Rtt)","Rdd = max(Rss,Rtt);"
+"Rdd=maxu(Rss,Rtt)","Rdd = max(Rss.u64,Rtt.u64);"
+"Rd=min(Rt,Rs)","Rd = min(Rt,Rs);"
+"Rd=minu(Rt,Rs)","Rd = min(Rt.uw[0],Rs.uw[0]);"
+"Rdd=min(Rtt,Rss)","Rdd = min(Rtt,Rss);"
+"Rdd=minu(Rtt,Rss)","Rdd = min(Rtt.u64,Rss.u64);"
+"Rd=modwrap(Rs,Rt)","if (Rs < 0) {Rd = Rs + Rt.uw[0];} else if (Rs.uw[0] >= Rt.uw[0]) {Rd = Rs - Rt.uw[0];} else {Rd = Rs;};"
+Rd=neg(Rs):sat,Rd = sat32(-Rs.s64);
+Rdd=neg(Rss),Rdd = -Rss;
+"Rd=cround(Rs,#u5)","Rd = (#u==0)?Rs:convround(Rs,2**(#u-1))>>#u;"
+"Rd=cround(Rs,Rt)","Rd = (zxt5->32(Rt)==0)?Rs:convround(Rs,2**(zxt5->32(Rt)-1))>>zxt5->32(Rt);"
+"Rd=round(Rs,#u5)[:sat]","Rd = ([sat32]((#u==0)?(Rs):round(Rs,2**(#u-1))))>>#u;"
+"Rd=round(Rs,Rt)[:sat]","Rd = ([sat32]((zxt5->32(Rt)==0)?(Rs):round(Rs,2**(zxt5->32(Rt)-1))))>>zxt5->32(Rt);"
+Rd=round(Rss):sat,"tmp=sat64(Rss+0x080000000ULL);Rd = tmp.w[1];"
+"Rd=sub(Rt,Rs):sat:deprecated",Rd=sat32(Rt - Rs);
+"Rdd=sub(Rtt,Rss)",Rdd=Rtt-Rss;
+"Rx+=sub(Rt,Rs)",Rx=Rx + (Rt - Rs);
+"Rd=sub(Rt.L,Rs.[HL])[:sat]",Rd=[sat16](Rt.h[0]-Rs.h[01]);
+"Rd=sub(Rt.[HL],Rs.[HL])[:sat]:<<16",Rd=([sat16](Rt.h[01]-Rs.h[01]))<<16;
+Rdd=sxtw(Rs),Rdd = sxt32->64(Rs);
+Rdd=vabsh(Rss),"for (i=0;i<4;i++) {Rdd.h[i]=ABS(Rss.h[i]);};"
+Rdd=vabsh(Rss):sat,"for (i=0;i<4;i++) {Rdd.h[i]=sat16(ABS(Rss.h[i]));};"
+Rdd=vabsw(Rss),"for (i=0;i<2;i++) {Rdd.w[i]=ABS(Rss.w[i]);};"
+Rdd=vabsw(Rss):sat,"for (i=0;i<2;i++) {Rdd.w[i]=sat32(ABS(Rss.w[i]));};"
+"Rdd=vabsdiffb(Rtt,Rss)","for (i=0;i<8;i++) {Rdd.b[i]=ABS(Rtt.b[i] - Rss.b[i]);};"
+"Rdd=vabsdiffub(Rtt,Rss)","for (i=0;i<8;i++) {Rdd.b[i]=ABS(Rtt.ub[i] - Rss.ub[i]);};"
+"Rdd=vabsdiffh(Rtt,Rss)","for (i=0;i<4;i++) {Rdd.h[i]=ABS(Rtt.h[i] - Rss.h[i]);};"
+"Rdd=vabsdiffw(Rtt,Rss)","for (i=0;i<2;i++) {Rdd.w[i]=ABS(Rtt.w[i] - Rss.w[i]);};"
+"Rxx,Pe=vacsh(Rss,Rtt)","for (i = 0; i < 4; i++) {xv = (int) Rxx.h[i];sv = (int) Rss.h[i];tv = (int) Rtt.h[i];xv = xv + tv;sv = sv - tv;Pe.i*2 = (xv > sv);Pe.i*2+1 = (xv > sv);Rxx.h[i]=sat16(max(xv,sv));};"
+"Rdd=vaddh(Rss,Rtt)[:sat]","for (i=0;i<4;i++) {Rdd.h[i]=[sat16](Rss.h[i]+Rtt.h[i]);};"
+"Rdd=vadduh(Rss,Rtt):sat","for (i=0;i<4;i++) {Rdd.h[i]=usat16(Rss.uh[i]+Rtt.uh[i]);};"
+"Rd=vaddhub(Rss,Rtt):sat","for (i=0;i<4;i++) {Rd.b[i]=usat8(Rss.h[i]+Rtt.h[i]);};"
+"Rdd=vraddub(Rss,Rtt)","Rdd = 0;for (i=0;i<4;i++) {Rdd.w[0]=(Rdd.w[0] +(Rss.ub[i]+Rtt.ub[i]));};for (i=4;i<8;i++) {Rdd.w[1]=(Rdd.w[1] +(Rss.ub[i]+Rtt.ub[i]));};"
+"Rxx+=vraddub(Rss,Rtt)","for (i = 0; i < 4; i++) {Rxx.w[0]=(Rxx.w[0] +(Rss.ub[i]+Rtt.ub[i]));};for (i = 4; i < 8; i++) {Rxx.w[1]=(Rxx.w[1] +(Rss.ub[i]+Rtt.ub[i]));};"
+"Rd=vraddh(Rss,Rtt)","Rd = 0;for (i=0;i<4;i++) {Rd += (Rss.h[i]+Rtt.h[i]);};"
+"Rd=vradduh(Rss,Rtt)","Rd = 0;for (i=0;i<4;i++) {Rd += (Rss.uh[i]+Rtt.uh[i]);};"
+"Rdd=vaddb(Rss,Rtt)","Assembler mapped to: ""Rdd=vaddub(Rss,Rtt)"""
+"Rdd=vaddub(Rss,Rtt)[:sat]","for (i = 0; i < 8; i++) {Rdd.b[i]=[usat8](Rss.ub[i]+Rtt.ub[i]);};"
+"Rdd=vaddw(Rss,Rtt)[:sat]","for (i=0;i<2;i++) {Rdd.w[i]=[sat32](Rss.w[i]+Rtt.w[i]);};"
+"Rdd=vavgh(Rss,Rtt)","for (i=0;i<4;i++) {Rdd.h[i]=(Rss.h[i]+Rtt.h[i])>>1;};"
+"Rdd=vavgh(Rss,Rtt):crnd","for (i=0;i<4;i++) {Rdd.h[i]=convround(Rss.h[i]+Rtt.h[i])>>1;};"
+"Rdd=vavgh(Rss,Rtt):rnd","for (i=0;i<4;i++) {Rdd.h[i]=(Rss.h[i]+Rtt.h[i]+1)>>1;};"
+"Rdd=vavguh(Rss,Rtt)","for (i=0;i<4;i++) {Rdd.h[i]=(Rss.uh[i]+Rtt.uh[i])>>1;};"
+"Rdd=vavguh(Rss,Rtt):rnd","for (i=0;i<4;i++) {Rdd.h[i]=(Rss.uh[i]+Rtt.uh[i]+1)>>1;};"
+"Rdd=vnavgh(Rtt,Rss)","for (i=0;i<4;i++) {Rdd.h[i]=(Rtt.h[i]-Rss.h[i])>>1;};"
+"Rdd=vnavgh(Rtt,Rss):crnd:sat","for (i=0;i<4;i++) {Rdd.h[i]=sat16(convround(Rtt.h[i]-Rss.h[i])>>1);};"
+"Rdd=vnavgh(Rtt,Rss):rnd:sat","for (i=0;i<4;i++) {Rdd.h[i]=sat16((Rtt.h[i]-Rss.h[i]+1)>>1);};"
+"Rdd=vavgub(Rss,Rtt)","for (i = 0; i < 8; i++) {Rdd.b[i]=((Rss.ub[i] + Rtt.ub[i])>>1);};"
+"Rdd=vavgub(Rss,Rtt):rnd","for (i = 0; i < 8; i++) {Rdd.b[i]=((Rss.ub[i]+Rtt.ub[i]+1)>>1);};"
+"Rdd=vavguw(Rss,Rtt)[:rnd]","for (i=0;i<2;i++) {Rdd.w[i]=(zxt32->33(Rss.uw[i])+zxt32->33(Rtt.uw[i])+1)>>1;};"
+"Rdd=vavgw(Rss,Rtt):crnd","for (i=0;i<2;i++) {Rdd.w[i]=(convround(sxt32->33(Rss.w[i])+sxt32->33(Rtt.w[i]))>>1);};"
+"Rdd=vavgw(Rss,Rtt)[:rnd]","for (i=0;i<2;i++) {Rdd.w[i]=(sxt32->33(Rss.w[i])+sxt32->33(Rtt.w[i])+1)>>1;};"
+"Rdd=vnavgw(Rtt,Rss)","for (i=0;i<2;i++) {Rdd.w[i]=(sxt32->33(Rtt.w[i])-sxt32->33(Rss.w[i]))>>1;};"
+"Rdd=vnavgw(Rtt,Rss):crnd:sat","for (i=0;i<2;i++) {Rdd.w[i]=sat32(convround(sxt32->33(Rtt.w[i])-sxt32->33(Rss.w[i]))>>1);};"
+"Rdd=vnavgw(Rtt,Rss):rnd:sat","for (i=0;i<2;i++) {Rdd.w[i]=sat32((sxt32->33(Rtt.w[i])-sxt32->33(Rss.w[i])+1)>>1);};"
+"Rdd=vcnegh(Rss,Rt)","for (i = 0; i < 4; i++) {if (Rt.i) {Rdd.h[i]=sat16(-Rss.h[i]);} else {Rdd.h[i]=Rss.h[i];};};"
+"Rxx+=vrcnegh(Rss,Rt)","for (i = 0; i < 4; i++) {if (Rt.i) {Rxx += -Rss.h[i];} else {Rxx += Rss.h[i];};};"
+"Rdd=vmaxb(Rtt,Rss)","for (i = 0; i < 8; i++) {Rdd.b[i]=max(Rtt.b[i],Rss.b[i]);};"
+"Rdd=vmaxub(Rtt,Rss)","for (i = 0; i < 8; i++) {Rdd.b[i]=max(Rtt.ub[i],Rss.ub[i]);};"
+"Rdd=vmaxh(Rtt,Rss)","for (i = 0; i < 4; i++) {Rdd.h[i]=max(Rtt.h[i],Rss.h[i]);};"
+"Rdd=vmaxuh(Rtt,Rss)","for (i = 0; i < 4; i++) {Rdd.h[i]=max(Rtt.uh[i],Rss.uh[i]);};"
+"Rxx=vrmaxh(Rss,Ru)","max = Rxx.h[0];addr = Rxx.w[1];for (i = 0; i < 4; i++) {if (max < Rss.h[i]) {max = Rss.h[i];addr = Ru | i<<1;};};Rxx.w[0]=max;Rxx.w[1]=addr;"
+"Rxx=vrmaxuh(Rss,Ru)","max = Rxx.uh[0];addr = Rxx.w[1];for (i = 0; i < 4; i++) {if (max < Rss.uh[i]) {max = Rss.uh[i];addr = Ru | i<<1;};};Rxx.w[0]=max;Rxx.w[1]=addr;"
+"Rxx=vrmaxuw(Rss,Ru)","max = Rxx.uw[0];addr = Rxx.w[1];for (i = 0; i < 2; i++) {if (max < Rss.uw[i]) {max = Rss.uw[i];addr = Ru | i<<2;};};Rxx.w[0]=max;Rxx.w[1]=addr;"
+"Rxx=vrmaxw(Rss,Ru)","max = Rxx.w[0];addr = Rxx.w[1];for (i = 0; i < 2; i++) {if (max < Rss.w[i]) {max = Rss.w[i];addr = Ru | i<<2;};};Rxx.w[0]=max;Rxx.w[1]=addr;"
+"Rdd=vmaxuw(Rtt,Rss)","for (i = 0; i < 2; i++) {Rdd.w[i]=max(Rtt.uw[i],Rss.uw[i]);};"
+"Rdd=vmaxw(Rtt,Rss)","for (i = 0; i < 2; i++) {Rdd.w[i]=max(Rtt.w[i],Rss.w[i]);};"
+"Rdd,Pe=vminub(Rtt,Rss)","for (i = 0; i < 8; i++) {Pe.i = (Rtt.ub[i] > Rss.ub[i]);Rdd.b[i]=min(Rtt.ub[i],Rss.ub[i]);};"
+"Rdd=vminb(Rtt,Rss)","for (i = 0; i < 8; i++) {Rdd.b[i]=min(Rtt.b[i],Rss.b[i]);};"
+"Rdd=vminub(Rtt,Rss)","for (i = 0; i < 8; i++) {Rdd.b[i]=min(Rtt.ub[i],Rss.ub[i]);};"
+"Rdd=vminh(Rtt,Rss)","for (i = 0; i < 4; i++) {Rdd.h[i]=min(Rtt.h[i],Rss.h[i]);};"
+"Rdd=vminuh(Rtt,Rss)","for (i = 0; i < 4; i++) {Rdd.h[i]=min(Rtt.uh[i],Rss.uh[i]);};"
+"Rxx=vrminh(Rss,Ru)","min = Rxx.h[0];addr = Rxx.w[1];for (i = 0; i < 4; i++) {if (min > Rss.h[i]) {min = Rss.h[i];addr = Ru | i<<1;};};Rxx.w[0]=min;Rxx.w[1]=addr;"
+"Rxx=vrminuh(Rss,Ru)","min = Rxx.uh[0];addr = Rxx.w[1];for (i = 0; i < 4; i++) {if (min > Rss.uh[i]) {min = Rss.uh[i];addr = Ru | i<<1;};};Rxx.w[0]=min;Rxx.w[1]=addr;"
+"Rxx=vrminuw(Rss,Ru)","min = Rxx.uw[0];addr = Rxx.w[1];for (i = 0; i < 2; i++) {if (min > Rss.uw[i]) {min = Rss.uw[i];addr = Ru | i<<2;};};Rxx.w[0]=min;Rxx.w[1]=addr;"
+"Rxx=vrminw(Rss,Ru)","min = Rxx.w[0];addr = Rxx.w[1];for (i = 0; i < 2; i++) {if (min > Rss.w[i]) {min = Rss.w[i];addr = Ru | i<<2;};};Rxx.w[0]=min;Rxx.w[1]=addr;"
+"Rdd=vminuw(Rtt,Rss)","for (i = 0; i < 2; i++) {Rdd.w[i]=min(Rtt.uw[i],Rss.uw[i]);};"
+"Rdd=vminw(Rtt,Rss)","for (i = 0; i < 2; i++) {Rdd.w[i]=min(Rtt.w[i],Rss.w[i]);};"
+"Rdd=vrsadub(Rss,Rtt)","Rdd = 0;for (i = 0; i < 4; i++) {Rdd.w[0]=(Rdd.w[0] + ABS((Rss.ub[i] -Rtt.ub[i])));};for (i = 4; i < 8; i++) {Rdd.w[1]=(Rdd.w[1] + ABS((Rss.ub[i] -Rtt.ub[i])));};"
+"Rxx+=vrsadub(Rss,Rtt)","for (i = 0; i < 4; i++) {Rxx.w[0]=(Rxx.w[0] + ABS((Rss.ub[i] -Rtt.ub[i])));};for (i = 4; i < 8; i++) {Rxx.w[1]=(Rxx.w[1] + ABS((Rss.ub[i] -Rtt.ub[i])));};"
+"Rdd=vsubh(Rtt,Rss)[:sat]","for (i=0;i<4;i++) {Rdd.h[i]=[sat16](Rtt.h[i]-Rss.h[i]);};"
+"Rdd=vsubuh(Rtt,Rss):sat","for (i=0;i<4;i++) {Rdd.h[i]=usat16(Rtt.uh[i]-Rss.uh[i]);};"
+"Rdd=vsubb(Rss,Rtt)","Assembler mapped to: ""Rdd=vsubub(Rss,Rtt)"""
+"Rdd=vsubub(Rtt,Rss)[:sat]","for (i = 0; i < 8; i++) {Rdd.b[i]=[usat8](Rtt.ub[i]-Rss.ub[i]);};"
+"Rdd=vsubw(Rtt,Rss)[:sat]","for (i=0;i<2;i++) {Rdd.w[i]=[sat32](Rtt.w[i]-Rss.w[i]);};"
+"Rd=add(clb(Rs),#s6)","Rd =(max(count_leading_ones(Rs),count_leading_ones(~Rs)))+#s;"
+"Rd=add(clb(Rss),#s6)","Rd =(max(count_leading_ones(Rss),count_leading_ones(~Rss)))+#s;"
+Rd=cl0(Rs),Rd = count_leading_ones(~Rs);
+Rd=cl0(Rss),Rd = count_leading_ones(~Rss);
+Rd=cl1(Rs),Rd = count_leading_ones(Rs);
+Rd=cl1(Rss),Rd = count_leading_ones(Rss);
+Rd=clb(Rs),"Rd =max(count_leading_ones(Rs),count_leading_ones(~Rs));"
+Rd=clb(Rss),"Rd =max(count_leading_ones(Rss),count_leading_ones(~Rss));"
+Rd=normamt(Rs),"if (Rs == 0) {Rd = 0;} else {Rd =(max(count_leading_ones(Rs),count_leading_ones(~Rs)))-1;};"
+Rd=normamt(Rss),"if (Rss == 0) {Rd = 0;} else {Rd =(max(count_leading_ones(Rss),count_leading_ones(~Rss)))-1;};"
+Rd=popcount(Rss),Rd = count_ones(Rss);
+Rd=ct0(Rs),Rd = count_leading_ones(~reverse_bits(Rs));
+Rd=ct0(Rss),"Rd =count_leading_ones(~reverse_bits(Rss));"
+Rd=ct1(Rs),Rd = count_leading_ones(reverse_bits(Rs));
+Rd=ct1(Rss),Rd = count_leading_ones(reverse_bits(Rss));
+"","width=#u;offset=#U;Rd = sxtwidth->32((Rs >> offset));"
+"Rd=extract(Rs,#u5,#U5)","width=#u;offset=#U;Rd = sxt width->32 ((Rs >> offset));"
+"Rd=extract(Rs,Rtt)","width=zxt6->32((Rtt.w[1]));offset=sxt7->32((Rtt.w[0]));Rd = sxtwidth->64((offset>0)?(zxt32->64(zxt32->64(Rs))>>>offset):(zxt32->64(zxt32->64(Rs))<<offset));"
+"Rd=extractu(Rs,#u5,#U5)","width=#u;offset=#U;Rd = zxtwidth->32((Rs >> offset));"
+"Rd=extractu(Rs,Rtt)","width=zxt6->32((Rtt.w[1]));offset=sxt7->32((Rtt.w[0]));Rd = zxtwidth->64((offset>0)?(zxt32->64(zxt32->64(Rs))>>>offset):(zxt32->64(zxt32->64(Rs))<<offset));"
+"Rdd=extract(Rss,#u6,#U6)","width=#u;offset=#U;Rdd = sxtwidth->64((Rss >> offset));"
+"Rdd=extract(Rss,Rtt)","width=zxt6->32((Rtt.w[1]));offset=sxt7->32((Rtt.w[0]));Rdd = sxtwidth->64((offset>0)?(Rss>>>offset):(Rss<<offset));"
+"Rdd=extractu(Rss,#u6,#U6)","width=#u;offset=#U;Rdd = zxtwidth->64((Rss >> offset));"
+"Rdd=extractu(Rss,Rtt)","width=zxt6->32((Rtt.w[1]));offset=sxt7->32((Rtt.w[0]));Rdd = zxtwidth->64((offset>0)?(Rss>>>offset):(Rss<<offset));"
+"Rx=insert(Rs,#u5,#U5)","width=#u;offset=#U;Rx &= ~(((1<<width)-1)<<offset);Rx |= ((Rs & ((1<<width)-1)) << offset);"
+"Rx=insert(Rs,Rtt)","width=zxt6->32((Rtt.w[1]));offset=sxt7->32((Rtt.w[0]));mask = ((1<<width)-1);if (offset < 0) {Rx = 0;} else {Rx &= ~(mask<<offset);Rx |= ((Rs & mask) << offset);};"
+"Rxx=insert(Rss,#u6,#U6)","width=#u;offset=#U;Rxx &= ~(((1<<width)-1)<<offset);Rxx |= ((Rss & ((1<<width)-1)) << offset);"
+"Rxx=insert(Rss,Rtt)","width=zxt6->32((Rtt.w[1]));offset=sxt7->32((Rtt.w[0]));mask = ((1<<width)-1);if (offset < 0) {Rxx = 0;} else {Rxx &= ~(mask<<offset);Rxx |= ((Rss & mask) << offset);};"
+Rdd=deinterleave(Rss),"Rdd = deinterleave(ODD,EVEN);"
+Rdd=interleave(Rss),"Rdd = interleave(Rss.w[1],Rss.w[0]);"
+"Rdd=lfs(Rss,Rtt)","Rdd = (Rss.u64 >> 1) | ((1&count_ones(Rss &Rtt)).u64<<63) ;"
+"Rd=parity(Rs,Rt)",Rd = 1&count_ones(Rs & Rt);
+"Rd=parity(Rss,Rtt)",Rd = 1&count_ones(Rss & Rtt);
+Rd=brev(Rs),Rd = reverse_bits(Rs);
+Rdd=brev(Rss),Rdd = reverse_bits(Rss);
+"Rd=clrbit(Rs,#u5)",Rd = (Rs & (~(1<<#u)));
+"Rd=clrbit(Rs,Rt)","Rd = (Rs & (~((sxt7->32(Rt)>0)?(zxt32->64(1)<<sxt7->32(Rt)):(zxt32->64(1)>>>sxt7->32(Rt)))));"
+"Rd=setbit(Rs,#u5)",Rd = (Rs | (1<<#u));
+"Rd=setbit(Rs,Rt)","Rd = (Rs | ((sxt7->32(Rt)>0)?(zxt32->64(1)<<sxt7->32(Rt)):(zxt32->64(1)>>>sxt7->32(Rt))));"
+"Rd=togglebit(Rs,#u5)",Rd = (Rs ^ (1<<#u));
+"Rd=togglebit(Rs,Rt)","Rd = (Rs ^ (sxt7->32(Rt)>0)?(zxt32->64(1)<<sxt7->32(Rt)):(zxt32->64(1)>>>sxt7->32(Rt)));"
+"Rdd=bitsplit(Rs,#u5)","Rdd.w[1]=(Rs>>#u);Rdd.w[0]=zxt#u->32(Rs);"
+"Rdd=bitsplit(Rs,Rt)","shamt = zxt5->32(Rt);Rdd.w[1]=(Rs>>shamt);Rdd.w[0]=zxtshamt->32(Rs);"
+"Rx=tableidxb(Rs,#u4,#S6):raw","width=#u;offset=#S;field = Rs[(width+offset-1):offset];Rx[(width-1+0):0]=field;"
+"Rx=tableidxb(Rs,#u4,#U5)","Assembler mapped to:""Rx=tableidxb(Rs,#u4,#U5):raw"""
+"Rx=tableidxd(Rs,#u4,#S6):raw","width=#u;offset=#S+3;field = Rs[(width+offset-1):offset];Rx[(width-1+3):3]=field;"
+"Rx=tableidxd(Rs,#u4,#U5)","Assembler mapped to:""Rx=tableidxd(Rs,#u4,#U5-3):raw"""
+"Rx=tableidxh(Rs,#u4,#S6):raw","width=#u;offset=#S+1;field = Rs[(width+offset-1):offset];Rx[(width-1+1):1]=field;"
+"Rx=tableidxh(Rs,#u4,#U5)","Assembler mapped to:""Rx=tableidxh(Rs,#u4,#U5-1):raw"""
+"Rx=tableidxw(Rs,#u4,#S6):raw","width=#u;offset=#S+2;field = Rs[(width+offset-1):offset];Rx[(width-1+2):2]=field;"
+"Rx=tableidxw(Rs,#u4,#U5)","Assembler mapped to:""Rx=tableidxw(Rs,#u4,#U5-2):raw"""
+"Rdd=vxaddsubh(Rss,Rtt):rnd:>>1:sat","Rdd.h[0]=sat16((Rss.h[0]+Rtt.h[1]+1)>>1);Rdd.h[1]=sat16((Rss.h[1]-Rtt.h[0]+1)>>1);Rdd.h[2]=sat16((Rss.h[2]+Rtt.h[3]+1)>>1);Rdd.h[3]=sat16((Rss.h[3]-Rtt.h[2]+1)>>1);"
+"Rdd=vxaddsubh(Rss,Rtt):sat","Rdd.h[0]=sat16(Rss.h[0]+Rtt.h[1]);Rdd.h[1]=sat16(Rss.h[1]-Rtt.h[0]);Rdd.h[2]=sat16(Rss.h[2]+Rtt.h[3]);Rdd.h[3]=sat16(Rss.h[3]-Rtt.h[2]);"
+"Rdd=vxsubaddh(Rss,Rtt):rnd:>>1:sat","Rdd.h[0]=sat16((Rss.h[0]-Rtt.h[1]+1)>>1);Rdd.h[1]=sat16((Rss.h[1]+Rtt.h[0]+1)>>1);Rdd.h[2]=sat16((Rss.h[2]-Rtt.h[3]+1)>>1);Rdd.h[3]=sat16((Rss.h[3]+Rtt.h[2]+1)>>1);"
+"Rdd=vxsubaddh(Rss,Rtt):sat","Rdd.h[0]=sat16(Rss.h[0]-Rtt.h[1]);Rdd.h[1]=sat16(Rss.h[1]+Rtt.h[0]);Rdd.h[2]=sat16(Rss.h[2]-Rtt.h[3]);Rdd.h[3]=sat16(Rss.h[3]+Rtt.h[2]);"
+"Rdd=cmpy(Rs,Rt)[:<<N]:sat","Rdd.w[1]=sat32((Rs.h[1] * Rt.h[0])[<<N] +(Rs.h[0] * Rt.h[1])[<<N]);Rdd.w[0]=sat32((Rs.h[0] * Rt.h[0])[<<N] -(Rs.h[1] * Rt.h[1])[<<N]);"
+"Rdd=cmpy(Rs,Rt*)[:<<N]:sat","Rdd.w[1]=sat32((Rs.h[1] * Rt.h[0])[<<N] -(Rs.h[0] * Rt.h[1])[<<N]);Rdd.w[0]=sat32((Rs.h[0] * Rt.h[0])[<<N] +(Rs.h[1] * Rt.h[1])[<<N]);"
+"Rxx+=cmpy(Rs,Rt)[:<<N]:sat","Rxx.w[1]=sat32(Rxx.w[1] + (Rs.h[1] *Rt.h[0])[<<N] + (Rs.h[0] * Rt.h[1])[<<N]);Rxx.w[0]=sat32(Rxx.w[0] + (Rs.h[0] *Rt.h[0])[<<N] - (Rs.h[1] * Rt.h[1])[<<N]);"
+"Rxx+=cmpy(Rs,Rt*)[:<<N]:sat","Rxx.w[1]=sat32(Rxx.w[1] + (Rs.h[1] *Rt.h[0])[<<N] - (Rs.h[0] * Rt.h[1])[<<N]);Rxx.w[0]=sat32(Rxx.w[0] + (Rs.h[0] *Rt.h[0])[<<N] + (Rs.h[1] * Rt.h[1])[<<N]);"
+"Rxx-=cmpy(Rs,Rt)[:<<N]:sat","Rxx.w[1]=sat32(Rxx.w[1] - ((Rs.h[1] *Rt.h[0])[<<N] + (Rs.h[0] * Rt.h[1])[<<N]));Rxx.w[0]=sat32(Rxx.w[0] - ((Rs.h[0] *Rt.h[0])[<<N] - (Rs.h[1] * Rt.h[1])[<<N]));"
+"Rxx-=cmpy(Rs,Rt*)[:<<N]:sat","Rxx.w[1]=sat32(Rxx.w[1] - ((Rs.h[1] *Rt.h[0])[<<N] - (Rs.h[0] * Rt.h[1])[<<N]));Rxx.w[0]=sat32(Rxx.w[0] - ((Rs.h[0] *Rt.h[0])[<<N] + (Rs.h[1] * Rt.h[1])[<<N]));"
+"Rdd=cmpyi(Rs,Rt)","Rdd = (Rs.h[1] * Rt.h[0]) + (Rs.h[0] *Rt.h[1]);"
+"Rdd=cmpyr(Rs,Rt)","Rdd = (Rs.h[0] * Rt.h[0]) - (Rs.h[1] *Rt.h[1]);"
+"Rxx+=cmpyi(Rs,Rt)","Rxx = Rxx + (Rs.h[1] * Rt.h[0]) + (Rs.h[0]* Rt.h[1]);"
+"Rxx+=cmpyr(Rs,Rt)","Rxx = Rxx + (Rs.h[0] * Rt.h[0]) - (Rs.h[1]* Rt.h[1]);"
+"Rd=cmpy(Rs,Rt)[:<<N]:rnd:sat","Rd.h[1]=(sat32((Rs.h[1] * Rt.h[0])[<<N] +(Rs.h[0] * Rt.h[1])[<<N] + 0x8000)).h[1];Rd.h[0]=(sat32((Rs.h[0] * Rt.h[0])[<<N] -(Rs.h[1] * Rt.h[1])[<<N] + 0x8000)).h[1];"
+"Rd=cmpy(Rs,Rt*)[:<<N]:rnd:sat","Rd.h[1]=(sat32((Rs.h[1] * Rt.h[0])[<<N] -(Rs.h[0] * Rt.h[1])[<<N] + 0x8000)).h[1];Rd.h[0]=(sat32((Rs.h[0] * Rt.h[0])[<<N] +(Rs.h[1] * Rt.h[1])[<<N] + 0x8000)).h[1];"
+"Rd=cmpyiwh(Rss,Rt):<<1:rnd:sat","Rd = sat32(( (Rss.w[0] * Rt.h[1]) +(Rss.w[1] * Rt.h[0]) + 0x4000)>>15);"
+"Rd=cmpyiwh(Rss,Rt*):<<1:rnd:sat","Rd = sat32(( (Rss.w[1] * Rt.h[0]) -(Rss.w[0] * Rt.h[1]) + 0x4000)>>15);"
+"Rd=cmpyrwh(Rss,Rt):<<1:rnd:sat","Rd = sat32(( (Rss.w[0] * Rt.h[0]) -(Rss.w[1] * Rt.h[1]) + 0x4000)>>15);"
+"Rd=cmpyrwh(Rss,Rt*):<<1:rnd:sat","Rd = sat32(( (Rss.w[0] * Rt.h[0]) +(Rss.w[1] * Rt.h[1]) + 0x4000)>>15);"
+"Rdd=vcmpyi(Rss,Rtt)[:<<N]:sat","Rdd.w[0]=sat32((Rss.h[1] * Rtt.h[0]) +(Rss.h[0] * Rtt.h[1])[<<N]);Rdd.w[1]=sat32((Rss.h[3] * Rtt.h[2]) +(Rss.h[2] * Rtt.h[3])[<<N]);"
+"Rdd=vcmpyr(Rss,Rtt)[:<<N]:sat","Rdd.w[0]=sat32((Rss.h[0] * Rtt.h[0]) -(Rss.h[1] * Rtt.h[1])[<<N]);Rdd.w[1]=sat32((Rss.h[2] * Rtt.h[2]) -(Rss.h[3] * Rtt.h[3])[<<N]);"
+"Rxx+=vcmpyi(Rss,Rtt):sat","Rxx.w[0]=sat32(Rxx.w[0] + (Rss.h[1] *Rtt.h[0]) + (Rss.h[0] * Rtt.h[1])<<0);Rxx.w[1]=sat32(Rxx.w[1] + (Rss.h[3] *Rtt.h[2]) + (Rss.h[2] * Rtt.h[3])<<0);"
+Rdd=vconj(Rss):sat,"Rdd.h[1]=sat16(-Rss.h[1]);Rdd.h[0]=Rss.h[0];Rdd.h[3]=sat16(-Rss.h[3]);Rdd.h[2]=Rss.h[2];"
+"Rdd=vcrotate(Rss,Rt)","tmp = Rt[1:0];if (tmp == 0) {Rdd.h[0]=Rss.h[0];Rdd.h[1]=Rss.h[1];} else if (tmp == 1) {Rdd.h[0]=Rss.h[1];Rdd.h[1]=sat16(-Rss.h[0]);} else if (tmp == 2) {Rdd.h[0]=sat16(-Rss.h[1]);Rdd.h[1]=Rss.h[0];} else {Rdd.h[0]=sat16(-Rss.h[0]);Rdd.h[1]=sat16(-Rss.h[1]);};tmp = Rt[3:2];if (tmp == 0) {Rdd.h[2]=Rss.h[2];Rdd.h[3]=Rss.h[3];} else if (tmp == 1) {Rdd.h[2]=Rss.h[3];Rdd.h[3]=sat16(-Rss.h[2]);} else if (tmp == 2) {Rdd.h[2]=sat16(-Rss.h[3]);Rdd.h[3]=Rss.h[2];} else {Rdd.h[2]=sat16(-Rss.h[2]);Rdd.h[3]=sat16(-Rss.h[3]);};"
+"Rdd=vrcmpyr(Rss,Rtt*)","Rdd = (Rss.h[0] * Rtt.h[0]) + (Rss.h[1] *Rtt.h[1]) + (Rss.h[2] * Rtt.h[2]) +(Rss.h[3] * Rtt.h[3]);"
+"Rxx+=vrcmpyi(Rss,Rtt)","Rxx = Rxx + (Rss.h[1] * Rtt.h[0]) +(Rss.h[0] * Rtt.h[1]) + (Rss.h[3] *Rtt.h[2]) + (Rss.h[2] * Rtt.h[3]);"
+"Rxx+=vrcmpyi(Rss,Rtt*)","Rxx = Rxx + (Rss.h[1] * Rtt.h[0]) -(Rss.h[0] * Rtt.h[1]) + (Rss.h[3] *Rtt.h[2]) - (Rss.h[2] * Rtt.h[3]);"
+"Rxx+=vrcmpyr(Rss,Rtt)","Rxx = Rxx + (Rss.h[0] * Rtt.h[0]) -(Rss.h[1] * Rtt.h[1]) + (Rss.h[2] *Rtt.h[2]) - (Rss.h[3] * Rtt.h[3]);"
+"Rxx+=vrcmpyr(Rss,Rtt*)","Rxx = Rxx + (Rss.h[0] * Rtt.h[0]) +(Rss.h[1] * Rtt.h[1]) + (Rss.h[2] *Rtt.h[2]) + (Rss.h[3] * Rtt.h[3]);"
+"Rdd=vrcmpys(Rss,Rt):<<1:sat","if (""Rt & 1"") {Assembler mapped to:""Rdd=vrcmpys(Rss,Rtt):<<1:sat:raw:hi"";} else {Assembler mapped to:""Rdd=vrcmpys(Rss,Rtt):<<1:sat:raw:lo"";};"
+"Rdd=vrcmpys(Rss,Rtt):<<1:sat:raw:hi","Rdd.w[1]=sat32((Rss.h[1] *Rtt.w[1].h[0])<<1 + (Rss.h[3] *Rtt.w[1].h[1])<<1);Rdd.w[0]=sat32((Rss.h[0] *Rtt.w[1].h[0])<<1 + (Rss.h[2] *Rtt.w[1].h[1])<<1);"
+"Rdd=vrcmpys(Rss,Rtt):<<1:sat:raw:lo","Rdd.w[1]=sat32((Rss.h[1] *Rtt.w[0].h[0])<<1 + (Rss.h[3] *Rtt.w[0].h[1])<<1);Rdd.w[0]=sat32((Rss.h[0] *Rtt.w[0].h[0])<<1 + (Rss.h[2] *Rtt.w[0].h[1])<<1);"
+"Rxx+=vrcmpys(Rss,Rt):<<1:sat","if (""Rt & 1"") {Assembler mapped to:""Rxx+=vrcmpys(Rss,Rtt):<<1:sat:raw:hi"";} else {Assembler mapped to:""Rxx+=vrcmpys(Rss,Rtt):<<1:sat:raw:lo"";};"
+"Rxx+=vrcmpys(Rss,Rtt):<<1:sat:raw:hi","Rxx.w[1]=sat32(Rxx.w[1] + (Rss.h[1] *Rtt.w[1].h[0])<<1 + (Rss.h[3] *Rtt.w[1].h[1])<<1);Rxx.w[0]=sat32(Rxx.w[0] + (Rss.h[0] *Rtt.w[1].h[0])<<1 + (Rss.h[2] *Rtt.w[1].h[1])<<1);"
+"Rxx+=vrcmpys(Rss,Rtt):<<1:sat:raw:lo","Rxx.w[1]=sat32(Rxx.w[1] + (Rss.h[1] *Rtt.w[0].h[0])<<1 + (Rss.h[3] *Rtt.w[0].h[1])<<1);Rxx.w[0]=sat32(Rxx.w[0] + (Rss.h[0] *Rtt.w[0].h[0])<<1 + (Rss.h[2] *Rtt.w[0].h[1])<<1);"
+"Rd=vrcmpys(Rss,Rt):<<1:rnd:sat","if (""Rt & 1"") {Assembler mapped to:""Rd=vrcmpys(Rss,Rtt):<<1:rnd:sat:raw:hi"";} else {Assembler mapped to:""Rd=vrcmpys(Rss,Rtt):<<1:rnd:sat:raw:lo"";};"
+"Rd=vrcmpys(Rss,Rtt):<<1:rnd:sat:raw:hi","Rd.h[1]=sat32((Rss.h[1] * Rtt.w[1].h[0])<<1+ (Rss.h[3] * Rtt.w[1].h[1])<<1 +0x8000).h[1];Rd.h[0]=sat32((Rss.h[0] * Rtt.w[1].h[0])<<1+ (Rss.h[2] * Rtt.w[1].h[1])<<1 +0x8000).h[1];"
+"Rd=vrcmpys(Rss,Rtt):<<1:rnd:sat:raw:lo","Rd.h[1]=sat32((Rss.h[1] * Rtt.w[0].h[0])<<1+ (Rss.h[3] * Rtt.w[0].h[1])<<1 +0x8000).h[1];Rd.h[0]=sat32((Rss.h[0] * Rtt.w[0].h[0])<<1+ (Rss.h[2] * Rtt.w[0].h[1])<<1 +0x8000).h[1];"
+"Rdd=vrcrotate(Rss,Rt,#u2)","sumr = 0;sumi = 0;control = Rt.ub[#u];for (i = 0; i < 8; i += 2) {tmpr = Rss.b[i];tmpi = Rss.b[i+1];switch (control & 3) {case 0: sumr += tmpr;sumi += tmpi;break;case 1: sumr += tmpi;sumi -= tmpr;break;case 2: sumr -= tmpi;sumi += tmpr;break;case 3: sumr -= tmpr;sumi -= tmpi;break;};control = control >> 2;};Rdd.w[0]=sumr;Rdd.w[1]=sumi;"
+"Rxx+=vrcrotate(Rss,Rt,#u2)","sumr = 0;sumi = 0;control = Rt.ub[#u];for (i = 0; i < 8; i += 2) {tmpr = Rss.b[i];tmpi = Rss.b[i+1];switch (control & 3) {case 0: sumr += tmpr;sumi += tmpi;break;case 1: sumr += tmpi;sumi -= tmpr;break;case 2: sumr -= tmpi;sumi += tmpr;break;case 3: sumr -= tmpr;sumi -= tmpi;break;};control = control >> 2;};Rxx.w[0]=Rxx.w[0] + sumr;Rxx.w[1]=Rxx.w[1] + sumi;"
+"Rd=sfadd(Rs,Rt)",Rd=Rs+Rt;
+"Pd=dfclass(Rss,#u5)","Pd = 0;class = fpclassify(Rss);if (#u.0 && (class == FP_ZERO)) Pd = 0xff;if (#u.1 && (class == FP_NORMAL)) Pd =0xff;if (#u.2 && (class == FP_SUBNORMAL)) Pd =0xff;if (#u.3 && (class == FP_INFINITE)) Pd =0xff;if (#u.4 && (class == FP_NAN)) Pd = 0xff;cancel_flags();"
+"Pd=sfclass(Rs,#u5)","Pd = 0;class = fpclassify(Rs);if (#u.0 && (class == FP_ZERO)) Pd = 0xff;if (#u.1 && (class == FP_NORMAL)) Pd =0xff;if (#u.2 && (class == FP_SUBNORMAL)) Pd =0xff;if (#u.3 && (class == FP_INFINITE)) Pd =0xff;if (#u.4 && (class == FP_NAN)) Pd = 0xff;cancel_flags();"
+"Pd=dfcmp.eq(Rss,Rtt)",Pd=Rss==Rtt ? 0xff : 0x00;
+"Pd=dfcmp.ge(Rss,Rtt)",Pd=Rss>=Rtt ? 0xff : 0x00;
+"Pd=dfcmp.gt(Rss,Rtt)",Pd=Rss>Rtt ? 0xff : 0x00;
+"Pd=dfcmp.uo(Rss,Rtt)","Pd=isunordered(Rss,Rtt) ? 0xff : 0x00;"
+"Pd=sfcmp.eq(Rs,Rt)",Pd=Rs==Rt ? 0xff : 0x00;
+"Pd=sfcmp.ge(Rs,Rt)",Pd=Rs>=Rt ? 0xff : 0x00;
+"Pd=sfcmp.gt(Rs,Rt)",Pd=Rs>Rt ? 0xff : 0x00;
+"Pd=sfcmp.uo(Rs,Rt)","Pd=isunordered(Rs,Rt) ? 0xff : 0x00;"
+Rd=convert_df2sf(Rss),Rd = conv_df_to_sf(Rss);
+Rdd=convert_sf2df(Rs),Rdd = conv_sf_to_df(Rs);
+Rd=convert_d2sf(Rss),Rd = conv_8s_to_sf(Rss.s64);
+Rd=convert_ud2sf(Rss),Rd = conv_8u_to_sf(Rss.u64);
+Rd=convert_uw2sf(Rs),Rd = conv_4u_to_sf(Rs.uw[0]);
+Rd=convert_w2sf(Rs),Rd = conv_4s_to_sf(Rs.s32);
+Rdd=convert_d2df(Rss),Rdd = conv_8s_to_df(Rss.s64);
+Rdd=convert_ud2df(Rss),Rdd = conv_8u_to_df(Rss.u64);
+Rdd=convert_uw2df(Rs),Rdd = conv_4u_to_df(Rs.uw[0]);
+Rdd=convert_w2df(Rs),Rdd = conv_4s_to_df(Rs.s32);
+Rd=convert_df2uw(Rss),Rd = conv_df_to_4u(Rss).uw[0];
+Rd=convert_df2uw(Rss):chop,"round_to_zero();Rd = conv_df_to_4u(Rss).uw[0];"
+Rd=convert_df2w(Rss),Rd = conv_df_to_4s(Rss).s32;
+Rd=convert_df2w(Rss):chop,"round_to_zero();Rd = conv_df_to_4s(Rss).s32;"
+Rd=convert_sf2uw(Rs),Rd = conv_sf_to_4u(Rs).uw[0];
+Rd=convert_sf2uw(Rs):chop,"round_to_zero();Rd = conv_sf_to_4u(Rs).uw[0];"
+Rd=convert_sf2w(Rs),Rd = conv_sf_to_4s(Rs).s32;
+Rd=convert_sf2w(Rs):chop,"round_to_zero();Rd = conv_sf_to_4s(Rs).s32;"
+Rdd=convert_df2d(Rss),Rdd = conv_df_to_8s(Rss).s64;
+Rdd=convert_df2d(Rss):chop,"round_to_zero();Rdd = conv_df_to_8s(Rss).s64;"
+Rdd=convert_df2ud(Rss),Rdd = conv_df_to_8u(Rss).u64;
+Rdd=convert_df2ud(Rss):chop,"round_to_zero();Rdd = conv_df_to_8u(Rss).u64;"
+Rdd=convert_sf2d(Rs),Rdd = conv_sf_to_8s(Rs).s64;
+Rdd=convert_sf2d(Rs):chop,"round_to_zero();Rdd = conv_sf_to_8s(Rs).s64;"
+Rdd=convert_sf2ud(Rs),Rdd = conv_sf_to_8u(Rs).u64;
+Rdd=convert_sf2ud(Rs):chop,"round_to_zero();Rdd = conv_sf_to_8u(Rs).u64;"
+"Rd=sffixupd(Rs,Rt)","(Rs,Rt,Rd,adjust)=recip_common(Rs,Rt);Rd = Rt;"
+"Rd=sffixupn(Rs,Rt)","(Rs,Rt,Rd,adjust)=recip_common(Rs,Rt);Rd = Rs;"
+Rd=sffixupr(Rs),"(Rs,Rd,adjust)=invsqrt_common(Rs);Rd = Rs;"
+"Rx+=sfmpy(Rs,Rt)","Rx=fmaf(Rs,Rt,Rx);"
+"Rx-=sfmpy(Rs,Rt)","Rx=fmaf(-Rs,Rt,Rx);"
+"Rx+=sfmpy(Rs,Rt,Pu):scale","if (isnan(Rx) || isnan(Rs) || isnan(Rt)) Rx= NaN;;tmp=fmaf(Rs,Rt,Rx) * 2**(Pu);if ((tmp != Rx) || ((Rs != 0.0) && (Rt !=0.0))) Rx = tmp;"
+"Rd,Pe=sfinvsqrta(Rs)","if ((Rs,Rd,adjust)=invsqrt_common(Rs)) {Pe = adjust;idx = (Rs >> 17) & 0x7f;mant = (invsqrt_lut[idx] << 15);exp = 127 - ((exponent(Rs) - 127) >> 1)- 1;Rd = -1**Rs.31 * 1.MANT * 2**(exp-BIAS);};"
+"Rx+=sfmpy(Rs,Rt):lib","round_to_nearest();infminusinf = ((isinf(Rx)) &&(isinf(Rs*Rt)) && (Rs ^ Rx ^ Rt.31 != 0));infinp = (isinf(Rx)) || (isinf(Rt)) ||(isinf(Rs));if (isnan(Rx) || isnan(Rs) || isnan(Rt)) Rx= NaN;;if ((Rs != 0.0) && (Rt != 0.0)) {Rx=fmaf(Rs,Rt,Rx);} else {if (isinf(Rs) || isinf(Rt)) Rx = NaN;};cancel_flags();if (isinf(Rx) && !infinp) Rx = Rx - 1;if (infminusinf) Rx = 0;"
+"Rx-=sfmpy(Rs,Rt):lib","round_to_nearest();infinp = (isinf(Rx)) || (isinf(Rt)) ||(isinf(Rs));infminusinf = ((isinf(Rx)) &&(isinf(Rs*Rt)) && (Rs ^ Rx ^ Rt.31 == 0));if (isnan(Rx) || isnan(Rs) || isnan(Rt)) Rx= NaN;;if ((Rs != 0.0) && (Rt != 0.0)) {Rx=fmaf(-Rs,Rt,Rx);} else {if (isinf(Rs) || isinf(Rt)) Rx = NaN;};cancel_flags();if (isinf(Rx) && !infinp) Rx = Rx - 1;if (infminusinf) Rx = 0;"
+Rd=sfmake(#u10):neg,"Rd = (127 - 6) << 23;Rd += (#u << 17);Rd |= (1 << 31);"
+Rd=sfmake(#u10):pos,"Rd = (127 - 6) << 23;Rd += #u << 17;"
+Rdd=dfmake(#u10):neg,"Rdd = (1023ULL - 6) << 52;Rdd += (#u) << 46;Rdd |= ((1ULL) << 63);"
+Rdd=dfmake(#u10):pos,"Rdd = (1023ULL - 6) << 52;Rdd += (#u) << 46;"
+"Rd=sfmax(Rs,Rt)","Rd = fmaxf(Rs,Rt);"
+"Rd=sfmin(Rs,Rt)","Rd = fmin(Rs,Rt);"
+"Rd=sfmpy(Rs,Rt)",Rd=Rs*Rt;
+"Rd,Pe=sfrecipa(Rs,Rt)","if ((Rs,Rt,Rd,adjust)=recip_common(Rs,Rt)){Pe = adjust;idx = (Rt >> 16) & 0x7f;mant = (recip_lut[idx] << 15) | 1;exp = 127 - (exponent(Rt) - 127) - 1;Rd = -1**Rt.31 * 1.MANT * 2**(exp-BIAS);};"
+"Rd=sfsub(Rs,Rt)",Rd=Rs-Rt;
+"Rd=+mpyi(Rs,#u8)","apply_extension(#u);Rd=Rs*#u;"
+"Rd=-mpyi(Rs,#u8)",Rd=Rs*-#u;
+"Rd=add(#u6,mpyi(Rs,#U6))","apply_extension(#u);Rd = #u + Rs*#U;"
+"Rd=add(#u6,mpyi(Rs,Rt))","apply_extension(#u);Rd = #u + Rs*Rt;"
+"Rd=add(Ru,mpyi(#u6:2,Rs))",Rd = Ru + Rs*#u;
+"Rd=add(Ru,mpyi(Rs,#u6))","apply_extension(#u);Rd = Ru + Rs*#u;"
+"Rd=mpyi(Rs,#m9)","if (""((#m9<0) && (#m9>-256))"") {Assembler mapped to: ""Rd=-mpyi(Rs,#m9*(-1))"";} else {Assembler mapped to:""Rd=+mpyi(Rs,#m9)"";};"
+"Rd=mpyi(Rs,Rt)",Rd=Rs*Rt;
+"Rd=mpyui(Rs,Rt)","Assembler mapped to: ""Rd=mpyi(Rs,Rt)"""
+"Rx+=mpyi(Rs,#u8)","apply_extension(#u);Rx=Rx + (Rs*#u);"
+"Rx+=mpyi(Rs,Rt)",Rx=Rx + Rs*Rt;
+"Rx-=mpyi(Rs,#u8)","apply_extension(#u);Rx=Rx - (Rs*#u);"
+"Ry=add(Ru,mpyi(Ry,Rs))",Ry = Ru + Rs*Ry;
+"Rdd=vmpyweh(Rss,Rtt)[:<<1]:rnd:sat","Rdd.w[1]=sat32(((Rss.w[1] *Rtt.h[2])[<<N]+0x8000)>>16);Rdd.w[0]=sat32(((Rss.w[0] *Rtt.h[0])[<<N]+0x8000)>>16);"
+"Rdd=vmpyweh(Rss,Rtt)[:<<1]:sat","Rdd.w[1]=sat32(((Rss.w[1] *Rtt.h[2])[<<N])>>16);Rdd.w[0]=sat32(((Rss.w[0] *Rtt.h[0])[<<N])>>16);"
+"Rdd=vmpywoh(Rss,Rtt)[:<<1]:rnd:sat","Rdd.w[1]=sat32(((Rss.w[1] *Rtt.h[3])[<<N]+0x8000)>>16);Rdd.w[0]=sat32(((Rss.w[0] *Rtt.h[1])[<<N]+0x8000)>>16);"
+"Rdd=vmpywoh(Rss,Rtt)[:<<1]:sat","Rdd.w[1]=sat32(((Rss.w[1] *Rtt.h[3])[<<N])>>16);Rdd.w[0]=sat32(((Rss.w[0] *Rtt.h[1])[<<N])>>16);"
+"Rxx+=vmpyweh(Rss,Rtt)[:<<1]:rnd:sat","Rxx.w[1]=sat32(Rxx.w[1] + (((Rss.w[1] *Rtt.h[2])[<<N]+0x8000)>>16));Rxx.w[0]=sat32(Rxx.w[0] + (((Rss.w[0] *Rtt.h[0])[<<N]+0x8000)>>16));"
+"Rxx+=vmpyweh(Rss,Rtt)[:<<1]:sat","Rxx.w[1]=sat32(Rxx.w[1] + (((Rss.w[1] *Rtt.h[2])[<<N])>>16));Rxx.w[0]=sat32(Rxx.w[0] + (((Rss.w[0] *Rtt.h[0])[<<N])>>16));"
+"Rxx+=vmpywoh(Rss,Rtt)[:<<1]:rnd:sat","Rxx.w[1]=sat32(Rxx.w[1] + (((Rss.w[1] *Rtt.h[3])[<<N]+0x8000)>>16));Rxx.w[0]=sat32(Rxx.w[0] + (((Rss.w[0] *Rtt.h[1])[<<N]+0x8000)>>16 ));"
+"Rxx+=vmpywoh(Rss,Rtt)[:<<1]:sat","Rxx.w[1]=sat32(Rxx.w[1] + (((Rss.w[1] *Rtt.h[3])[<<N])>>16));Rxx.w[0]=sat32(Rxx.w[0] + (((Rss.w[0] *Rtt.h[1])[<<N])>>16 ));"
+"Rdd=vmpyweuh(Rss,Rtt)[:<<1]:rnd:sat","Rdd.w[1]=sat32(((Rss.w[1] *Rtt.uh[2])[<<N]+0x8000)>>16);Rdd.w[0]=sat32(((Rss.w[0] *Rtt.uh[0])[<<N]+0x8000)>>16);"
+"Rdd=vmpyweuh(Rss,Rtt)[:<<1]:sat","Rdd.w[1]=sat32(((Rss.w[1] *Rtt.uh[2])[<<N])>>16);Rdd.w[0]=sat32(((Rss.w[0] *Rtt.uh[0])[<<N])>>16);"
+"Rdd=vmpywouh(Rss,Rtt)[:<<1]:rnd:sat","Rdd.w[1]=sat32(((Rss.w[1] *Rtt.uh[3])[<<N]+0x8000)>>16);Rdd.w[0]=sat32(((Rss.w[0] *Rtt.uh[1])[<<N]+0x8000)>>16);"
+"Rdd=vmpywouh(Rss,Rtt)[:<<1]:sat","Rdd.w[1]=sat32(((Rss.w[1] *Rtt.uh[3])[<<N])>>16);Rdd.w[0]=sat32(((Rss.w[0] *Rtt.uh[1])[<<N])>>16);"
+"Rxx+=vmpyweuh(Rss,Rtt)[:<<1]:rnd:sat","Rxx.w[1]=sat32(Rxx.w[1] + (((Rss.w[1] *Rtt.uh[2])[<<N]+0x8000)>>16));Rxx.w[0]=sat32(Rxx.w[0] + (((Rss.w[0] *Rtt.uh[0])[<<N]+0x8000)>>16));"
+"Rxx+=vmpyweuh(Rss,Rtt)[:<<1]:sat","Rxx.w[1]=sat32(Rxx.w[1] + (((Rss.w[1] *Rtt.uh[2])[<<N])>>16));Rxx.w[0]=sat32(Rxx.w[0] + (((Rss.w[0] *Rtt.uh[0])[<<N])>>16));"
+"Rxx+=vmpywouh(Rss,Rtt)[:<<1]:rnd:sat","Rxx.w[1]=sat32(Rxx.w[1] + (((Rss.w[1] *Rtt.uh[3])[<<N]+0x8000)>>16));Rxx.w[0]=sat32(Rxx.w[0] + (((Rss.w[0] *Rtt.uh[1])[<<N]+0x8000)>>16 ));"
+"Rxx+=vmpywouh(Rss,Rtt)[:<<1]:sat","Rxx.w[1]=sat32(Rxx.w[1] + (((Rss.w[1] *Rtt.uh[3])[<<N])>>16));Rxx.w[0]=sat32(Rxx.w[0] + (((Rss.w[0] *Rtt.uh[1])[<<N])>>16 ));"
+"Rd=mpy(Rs.[HL],Rt.[HL])[:<<N][:rnd][:sat]","Rd=[sat32]([round]((Rs.h[01] *Rt.h[01])[<<N]));"
+"Rdd=mpy(Rs.[HL],Rt.[HL])[:<<N][:rnd]",Rdd=[round]((Rs.h[01] * Rt.h[01])[<<N]);
+"Rx+=mpy(Rs.[HL],Rt.[HL])[:<<N][:sat]",Rx=[sat32](Rx+ (Rs.h[01] * Rt.h[01])[<<N]);
+"Rx-=mpy(Rs.[HL],Rt.[HL])[:<<N][:sat]",Rx=[sat32](Rx- (Rs.h[01] * Rt.h[01])[<<N]);
+"Rxx+=mpy(Rs.[HL],Rt.[HL])[:<<N]",Rxx=Rxx+ (Rs.h[01] * Rt.h[01])[<<N];
+"Rxx-=mpy(Rs.[HL],Rt.[HL])[:<<N]",Rxx=Rxx- (Rs.h[01] * Rt.h[01])[<<N];
+"Rd=mpyu(Rs.[HL],Rt.[HL])[:<<N]",Rd=(Rs.uh[01] * Rt.uh[01])[<<N];
+"Rdd=mpyu(Rs.[HL],Rt.[HL])[:<<N]",Rdd=(Rs.uh[01] * Rt.uh[01])[<<N];
+"Rx+=mpyu(Rs.[HL],Rt.[HL])[:<<N]",Rx=Rx+ (Rs.uh[01] * Rt.uh[01])[<<N];
+"Rx-=mpyu(Rs.[HL],Rt.[HL])[:<<N]",Rx=Rx- (Rs.uh[01] * Rt.uh[01])[<<N];
+"Rxx+=mpyu(Rs.[HL],Rt.[HL])[:<<N]",Rxx=Rxx+ (Rs.uh[01] * Rt.uh[01])[<<N];
+"Rxx-=mpyu(Rs.[HL],Rt.[HL])[:<<N]",Rxx=Rxx- (Rs.uh[01] * Rt.uh[01])[<<N];
+"Rdd=pmpyw(Rs,Rt)","x = Rs.uw[0];y = Rt.uw[0];prod = 0;for(i=0; i < 32; i++) {if((y >> i) & 1) prod ^= (x << i);};Rdd = prod;"
+"Rxx^=pmpyw(Rs,Rt)","x = Rs.uw[0];y = Rt.uw[0];prod = 0;for(i=0; i < 32; i++) {if((y >> i) & 1) prod ^= (x << i);};Rxx ^= prod;"
+"Rd=mpy(Rs,Rt.H):<<1:rnd:sat",Rd = sat32(((Rs * Rt.h[1])<<1+0x8000)>>16);
+"Rd=mpy(Rs,Rt.H):<<1:sat",Rd = sat32(((Rs * Rt.h[1])<<1)>>16);
+"Rd=mpy(Rs,Rt.L):<<1:rnd:sat",Rd = sat32(((Rs * Rt.h[0])<<1+0x8000)>>16);
+"Rd=mpy(Rs,Rt.L):<<1:sat",Rd = sat32(((Rs * Rt.h[0])<<1)>>16);
+"Rd=mpy(Rs,Rt):<<1",Rd=(Rs * Rt)>>31;
+"Rd=mpy(Rs,Rt)",Rd=(Rs * Rt)>>32;
+"Rd=mpy(Rs,Rt):<<1:sat",Rd=sat32((Rs * Rt)>>31);
+"Rd=mpy(Rs,Rt):rnd",Rd=((Rs * Rt)+0x80000000)>>32;
+"Rd=mpysu(Rs,Rt)",Rd=(Rs * Rt.uw[0])>>32;
+"Rd=mpyu(Rs,Rt)",Rd=(Rs.uw[0] * Rt.uw[0])>>32;
+"Rx+=mpy(Rs,Rt):<<1:sat",Rx=sat32((Rx) + ((Rs * Rt)>>31));
+"Rx-=mpy(Rs,Rt):<<1:sat",Rx=sat32((Rx) - ((Rs * Rt)>>31));
+"Rdd=mpy(Rs,Rt)",Rdd=(Rs * Rt);
+"Rdd=mpyu(Rs,Rt)",Rdd=(Rs.uw[0] * Rt.uw[0]);
+"Rxx[+-]=mpy(Rs,Rt)",Rxx= Rxx[+-](Rs * Rt);
+"Rxx[+-]=mpyu(Rs,Rt)",Rxx= Rxx[+-](Rs.uw[0] * Rt.uw[0]);
+"Rdd=vdmpy(Rss,Rtt):<<1:sat","Rdd.w[0]=sat32((Rss.h[0] * Rtt.h[0])<<1 +(Rss.h[1] * Rtt.h[1])<<1);Rdd.w[1]=sat32((Rss.h[2] * Rtt.h[2])<<1 +(Rss.h[3] * Rtt.h[3])<<1);"
+"Rdd=vdmpy(Rss,Rtt):sat","Rdd.w[0]=sat32((Rss.h[0] * Rtt.h[0])<<0 +(Rss.h[1] * Rtt.h[1])<<0);Rdd.w[1]=sat32((Rss.h[2] * Rtt.h[2])<<0 +(Rss.h[3] * Rtt.h[3])<<0);"
+"Rxx+=vdmpy(Rss,Rtt):<<1:sat","Rxx.w[0]=sat32(Rxx.w[0] + (Rss.h[0] *Rtt.h[0])<<1 + (Rss.h[1] * Rtt.h[1])<<1);Rxx.w[1]=sat32(Rxx.w[1] + (Rss.h[2] *Rtt.h[2])<<1 + (Rss.h[3] * Rtt.h[3])<<1);"
+"Rxx+=vdmpy(Rss,Rtt):sat","Rxx.w[0]=sat32(Rxx.w[0] + (Rss.h[0] *Rtt.h[0])<<0 + (Rss.h[1] * Rtt.h[1])<<0);Rxx.w[1]=sat32(Rxx.w[1] + (Rss.h[2] *Rtt.h[2])<<0 + (Rss.h[3] * Rtt.h[3])<<0);"
+"Rdd=vrmpybsu(Rss,Rtt)","Rdd.w[0]=((Rss.b[0] * Rtt.ub[0]) +(Rss.b[1] * Rtt.ub[1]) + (Rss.b[2] *Rtt.ub[2]) + (Rss.b[3] * Rtt.ub[3]));Rdd.w[1]=((Rss.b[4] * Rtt.ub[4]) +(Rss.b[5] * Rtt.ub[5]) + (Rss.b[6] *Rtt.ub[6]) + (Rss.b[7] * Rtt.ub[7]));"
+"Rdd=vrmpybu(Rss,Rtt)","Rdd.w[0]=((Rss.ub[0] * Rtt.ub[0]) +(Rss.ub[1] * Rtt.ub[1]) + (Rss.ub[2] *Rtt.ub[2]) + (Rss.ub[3] * Rtt.ub[3]));Rdd.w[1]=((Rss.ub[4] * Rtt.ub[4]) +(Rss.ub[5] * Rtt.ub[5]) + (Rss.ub[6] *Rtt.ub[6]) + (Rss.ub[7] * Rtt.ub[7]));"
+"Rxx+=vrmpybsu(Rss,Rtt)","Rxx.w[0]=(Rxx.w[0] + (Rss.b[0] * Rtt.ub[0])+ (Rss.b[1] * Rtt.ub[1]) + (Rss.b[2] *Rtt.ub[2]) + (Rss.b[3] * Rtt.ub[3]));Rxx.w[1]=(Rxx.w[1] + (Rss.b[4] * Rtt.ub[4])+ (Rss.b[5] * Rtt.ub[5]) + (Rss.b[6] *Rtt.ub[6]) + (Rss.b[7] * Rtt.ub[7]));"
+"Rxx+=vrmpybu(Rss,Rtt)","Rxx.w[0]=(Rxx.w[0] + (Rss.ub[0] *Rtt.ub[0]) + (Rss.ub[1] * Rtt.ub[1]) +(Rss.ub[2] * Rtt.ub[2]) + (Rss.ub[3] *Rtt.ub[3]));Rxx.w[1]=(Rxx.w[1] + (Rss.ub[4] *Rtt.ub[4]) + (Rss.ub[5] * Rtt.ub[5]) +(Rss.ub[6] * Rtt.ub[6]) + (Rss.ub[7] *Rtt.ub[7]));"
+"Rdd=vmpyhsu(Rs,Rt)[:<<1]:sat","Rdd.w[0]=sat32((Rs.h[0] * Rt.uh[0])[<<N]);Rdd.w[1]=sat32((Rs.h[1] * Rt.uh[1])[<<N]);"
+"Rxx+=vmpyhsu(Rs,Rt)[:<<1]:sat","Rxx.w[0]=sat32(Rxx.w[0] + (Rs.h[0] *Rt.uh[0])[<<N]);Rxx.w[1]=sat32(Rxx.w[1] + (Rs.h[1] *Rt.uh[1])[<<N]);"
+"Rdd=vpmpyh(Rs,Rt)","x0 = Rs.uh[0];x1 = Rs.uh[1];y0 = Rt.uh[0];y1 = Rt.uh[1];prod0 = prod1 = 0;for(i=0; i < 16; i++) {if((y0 >> i) & 1) prod0 ^= (x0 << i);if((y1 >> i) & 1) prod1 ^= (x1 << i);};Rdd.h[0]=prod0.uh[0];Rdd.h[1]=prod1.uh[0];Rdd.h[2]=prod0.uh[1];Rdd.h[3]=prod1.uh[1];"
+"Rxx^=vpmpyh(Rs,Rt)","x0 = Rs.uh[0];x1 = Rs.uh[1];y0 = Rt.uh[0];y1 = Rt.uh[1];prod0 = prod1 = 0;for(i=0; i < 16; i++) {if((y0 >> i) & 1) prod0 ^= (x0 << i);if((y1 >> i) & 1) prod1 ^= (x1 << i);};Rxx.h[0]=Rxx.uh[0] ^ prod0.uh[0];Rxx.h[1]=Rxx.uh[1] ^ prod1.uh[0];Rxx.h[2]=Rxx.uh[2] ^ prod0.uh[1];Rxx.h[3]=Rxx.uh[3] ^ prod1.uh[1];"
+"Rdd=decbin(Rss,Rtt)","state = Rtt.w[1][5:0];valMPS = Rtt.w[1][8:8];bitpos = Rtt.w[0][4:0];range = Rss.w[0];offset = Rss.w[1];range <<= bitpos;offset <<= bitpos;rLPS = rLPS_table_64x4[state][ (range>>29)&3];rLPS = rLPS << 23;rMPS= (range&0xff800000) - rLPS;if (offset < rMPS) {Rdd = AC_next_state_MPS_64[state];Rdd[8:8]=valMPS;Rdd[31:23]=(rMPS>>23);Rdd.w[1]=offset;P0=valMPS;} else {Rdd = AC_next_state_LPS_64[state];Rdd[8:8]=((!state)?(1-valMPS):(valMPS));Rdd[31:23]=(rLPS>>23);Rdd.w[1]=(offset-rMPS);P0=(valMPS^1);};"
+Rd=sat(Rss),Rd = sat32(Rss);
+Rd=satb(Rs),Rd = sat8(Rs);
+Rd=sath(Rs),Rd = sat16(Rs);
+Rd=satub(Rs),Rd = usat8(Rs);
+Rd=satuh(Rs),Rd = usat16(Rs);
+Rd=swiz(Rs),"Rd.b[0]=Rs.b[3];Rd.b[1]=Rs.b[2];Rd.b[2]=Rs.b[1];Rd.b[3]=Rs.b[0];"
+"Rdd=valignb(Rtt,Rss,#u3)",Rdd = (Rss >>> #u*8)|(Rtt << ((8-#u)*8));
+"Rdd=valignb(Rtt,Rss,Pu)","Rdd = Rss >>> (Pu&0x7)*8|(Rtt << (8-(Pu&0x7))*8);"
+Rd=vrndwh(Rss),"for (i=0;i<2;i++) {Rd.h[i]=(Rss.w[i]+0x08000).h[1];};"
+Rd=vrndwh(Rss):sat,"for (i=0;i<2;i++) {Rd.h[i]=sat32(Rss.w[i]+0x08000).h[1];};"
+Rd=vsathb(Rs),"Rd.b[0]=sat8(Rs.h[0]);Rd.b[1]=sat8(Rs.h[1]);Rd.b[2]=0;Rd.b[3]=0;"
+Rd=vsathb(Rss),"for (i=0;i<4;i++) {Rd.b[i]=sat8(Rss.h[i]);};"
+Rd=vsathub(Rs),"Rd.b[0]=usat8(Rs.h[0]);Rd.b[1]=usat8(Rs.h[1]);Rd.b[2]=0;Rd.b[3]=0;"
+Rd=vsathub(Rss),"for (i=0;i<4;i++) {Rd.b[i]=usat8(Rss.h[i]);};"
+Rd=vsatwh(Rss),"for (i=0;i<2;i++) {Rd.h[i]=sat16(Rss.w[i]);};"
+Rd=vsatwuh(Rss),"for (i=0;i<2;i++) {Rd.h[i]=usat16(Rss.w[i]);};"
+Rdd=vsathb(Rss),"for (i=0;i<4;i++) {Rdd.h[i]=sat8(Rss.h[i]);};"
+Rdd=vsathub(Rss),"for (i=0;i<4;i++) {Rdd.h[i]=usat8(Rss.h[i]);};"
+Rdd=vsatwh(Rss),"for (i=0;i<2;i++) {Rdd.w[i]=sat16(Rss.w[i]);};"
+Rdd=vsatwuh(Rss),"for (i=0;i<2;i++) {Rdd.w[i]=usat16(Rss.w[i]);};"
+"Rdd=shuffeb(Rss,Rtt)","for (i=0;i<4;i++) {Rdd.b[i*2]=Rtt.b[i*2];Rdd.b[i*2+1]=Rss.b[i*2];};"
+"Rdd=shuffeh(Rss,Rtt)","for (i=0;i<2;i++) {Rdd.h[i*2]=Rtt.h[i*2];Rdd.h[i*2+1]=Rss.h[i*2];};"
+"Rdd=shuffob(Rtt,Rss)","for (i=0;i<4;i++) {Rdd.b[i*2]=Rss.b[i*2+1];Rdd.b[i*2+1]=Rtt.b[i*2+1];};"
+"Rdd=shuffoh(Rtt,Rss)","for (i=0;i<2;i++) {Rdd.h[i*2]=Rss.h[i*2+1];Rdd.h[i*2+1]=Rtt.h[i*2+1];};"
+Rd=vsplatb(Rs),"for (i=0;i<4;i++) {Rd.b[i]=Rs.b[0];};"
+Rdd=vsplatb(Rs),"for (i=0;i<8;i++) {Rdd.b[i]=Rs.b[0];};"
+Rdd=vsplath(Rs),"for (i=0;i<4;i++) {Rdd.h[i]=Rs.h[0];};"
+"Rdd=vspliceb(Rss,Rtt,#u3)",Rdd = Rtt << #u*8 | zxt#u*8->64(Rss);
+"Rdd=vspliceb(Rss,Rtt,Pu)",Rdd = Rtt << (Pu&7)*8 | zxt(Pu&7)*8->64(Rss);
+Rdd=vsxtbh(Rs),"for (i=0;i<4;i++) {Rdd.h[i]=Rs.b[i];};"
+Rdd=vsxthw(Rs),"for (i=0;i<2;i++) {Rdd.w[i]=Rs.h[i];};"
+Rd=vtrunehb(Rss),"for (i=0;i<4;i++) {Rd.b[i]=Rss.b[i*2];};"
+Rd=vtrunohb(Rss),"for (i=0;i<4;i++) {Rd.b[i]=Rss.b[i*2+1];};"
+"Rdd=vtrunehb(Rss,Rtt)","for (i=0;i<4;i++) {Rdd.b[i]=Rtt.b[i*2];Rdd.b[i+4]=Rss.b[i*2];};"
+"Rdd=vtrunewh(Rss,Rtt)","Rdd.h[0]=Rtt.h[0];Rdd.h[1]=Rtt.h[2];Rdd.h[2]=Rss.h[0];Rdd.h[3]=Rss.h[2];"
+"Rdd=vtrunohb(Rss,Rtt)","for (i=0;i<4;i++) {Rdd.b[i]=Rtt.b[i*2+1];Rdd.b[i+4]=Rss.b[i*2+1];};"
+"Rdd=vtrunowh(Rss,Rtt)","Rdd.h[0]=Rtt.h[1];Rdd.h[1]=Rtt.h[3];Rdd.h[2]=Rss.h[1];Rdd.h[3]=Rss.h[3];"
+Rdd=vzxtbh(Rs),"for (i=0;i<4;i++) {Rdd.h[i]=Rs.ub[i];};"
+Rdd=vzxthw(Rs),"for (i=0;i<2;i++) {Rdd.w[i]=Rs.uh[i];};"
+"Pd=boundscheck(Rs,Rtt)","if (""Rs & 1"") {Assembler mapped to:""Pd=boundscheck(Rss,Rtt):raw:hi"";} else {Assembler mapped to:""Pd=boundscheck(Rss,Rtt):raw:lo"";};"
+"Pd=boundscheck(Rss,Rtt):raw:hi","src = Rss.uw[1];Pd = (src.uw[0] >= Rtt.uw[0]) && (src.uw[0]< Rtt.uw[1]) ? 0xff : 0x00;"
+"Pd=boundscheck(Rss,Rtt):raw:lo","src = Rss.uw[0];Pd = (src.uw[0] >= Rtt.uw[0]) && (src.uw[0]< Rtt.uw[1]) ? 0xff : 0x00;"
+"Pd=cmpb.eq(Rs,#u8)",Pd=Rs.ub[0] == #u ? 0xff : 0x00;
+"Pd=cmpb.eq(Rs,Rt)",Pd=Rs.b[0] == Rt.b[0] ? 0xff : 0x00;
+"Pd=cmpb.gt(Rs,#s8)",Pd=Rs.b[0] > #s ? 0xff : 0x00;
+"Pd=cmpb.gt(Rs,Rt)",Pd=Rs.b[0] > Rt.b[0] ? 0xff : 0x00;
+"Pd=cmpb.gtu(Rs,#u7)","apply_extension(#u);Pd=Rs.ub[0] > #u.uw[0] ? 0xff : 0x00;"
+"Pd=cmpb.gtu(Rs,Rt)",Pd=Rs.ub[0] > Rt.ub[0] ? 0xff : 0x00;
+"Pd=cmph.eq(Rs,#s8)","apply_extension(#s);Pd=Rs.h[0] == #s ? 0xff : 0x00;"
+"Pd=cmph.eq(Rs,Rt)",Pd=Rs.h[0] == Rt.h[0] ? 0xff : 0x00;
+"Pd=cmph.gt(Rs,#s8)","apply_extension(#s);Pd=Rs.h[0] > #s ? 0xff : 0x00;"
+"Pd=cmph.gt(Rs,Rt)",Pd=Rs.h[0] > Rt.h[0] ? 0xff : 0x00;
+"Pd=cmph.gtu(Rs,#u7)","apply_extension(#u);Pd=Rs.uh[0] > #u.uw[0] ? 0xff : 0x00;"
+"Pd=cmph.gtu(Rs,Rt)",Pd=Rs.uh[0] > Rt.uh[0] ? 0xff : 0x00;
+"Pd=cmp.eq(Rss,Rtt)",Pd=Rss==Rtt ? 0xff : 0x00;
+"Pd=cmp.gt(Rss,Rtt)",Pd=Rss>Rtt ? 0xff : 0x00;
+"Pd=cmp.gtu(Rss,Rtt)",Pd=Rss.u64>Rtt.u64 ? 0xff : 0x00;
+"Pd=[!]bitsclr(Rs,#u6)",Pd=(Rs&#u)[!]=0 ? 0xff : 0x00;
+"Pd=[!]bitsclr(Rs,Rt)",Pd=(Rs&Rt)[!]=0 ? 0xff : 0x00;
+"Pd=[!]bitsset(Rs,Rt)",Pd=(Rs&Rt)[!]=Rt ? 0xff : 0x00;
+Rdd=mask(Pt),"for (i = 0; i < 8; i++) {Rdd.b[i]=(Pt.i?(0xff):(0x00));};"
+"Pd=tlbmatch(Rss,Rt)","MASK = 0x07ffffff;TLBLO = Rss.uw[0];TLBHI = Rss.uw[1];SIZE =min(6,count_leading_ones(~reverse_bits(TLBLO)));MASK &= (0xffffffff << 2*SIZE);Pd = TLBHI.31 && ((TLBHI & MASK) == (Rt &MASK)) ? 0xff : 0x00;"
+Pd=Rs,Pd = Rs.ub[0];
+Rd=Ps,Rd = zxt8->32(Ps);
+"Pd=tstbit(Rs,#u5)",Pd = (Rs & (1<<#u)) == 0 ? 0x00 : 0xff;
+"Pd=!tstbit(Rs,#u5)",Pd = (Rs & (1<<#u)) == 0 ? 0xff : 0x00;
+"Pd=tstbit(Rs,Rt)","Pd = (zxt32->64(Rs) & (sxt7->32(Rt)>0)?(zxt32->64(1)<<sxt7->32(Rt)):(zxt32->64(1)>>>sxt7->32(Rt))) == 0 ? 0x00 : 0xff;"
+"Pd=!tstbit(Rs,Rt)","Pd = (zxt32->64(Rs) & (sxt7->32(Rt)>0)?(zxt32->64(1)<<sxt7->32(Rt)):(zxt32->64(1)>>>sxt7->32(Rt))) == 0 ? 0xff : 0x00;"
+"Pd=vcmph.eq(Rss,#s8)","for (i = 0; i < 4; i++) {Pd.i*2 = (Rss.h[i] == #s);Pd.i*2+1 = (Rss.h[i] == #s);};"
+"Pd=vcmph.eq(Rss,Rtt)","for (i = 0; i < 4; i++) {Pd.i*2 = (Rss.h[i] == Rtt.h[i]);Pd.i*2+1 = (Rss.h[i] == Rtt.h[i]);};"
+"Pd=vcmph.gt(Rss,#s8)","for (i = 0; i < 4; i++) {Pd.i*2 = (Rss.h[i] > #s);Pd.i*2+1 = (Rss.h[i] > #s);};"
+"Pd=vcmph.gt(Rss,Rtt)","for (i = 0; i < 4; i++) {Pd.i*2 = (Rss.h[i] > Rtt.h[i]);Pd.i*2+1 = (Rss.h[i] > Rtt.h[i]);};"
+"Pd=vcmph.gtu(Rss,#u7)","for (i = 0; i < 4; i++) {Pd.i*2 = (Rss.uh[i] > #u);Pd.i*2+1 = (Rss.uh[i] > #u);};"
+"Pd=vcmph.gtu(Rss,Rtt)","for (i = 0; i < 4; i++) {Pd.i*2 = (Rss.uh[i] > Rtt.uh[i]);Pd.i*2+1 = (Rss.uh[i] > Rtt.uh[i]);};"
+"Pd=any8(vcmpb.eq(Rss,Rtt))","Pd = 0;for (i = 0; i < 8; i++) {if (Rss.b[i] == Rtt.b[i]) Pd = 0xff;};"
+"Pd=vcmpb.eq(Rss,#u8)","for (i = 0; i < 8; i++) {Pd.i = (Rss.ub[i] == #u);};"
+"Pd=vcmpb.eq(Rss,Rtt)","for (i = 0; i < 8; i++) {Pd.i = (Rss.b[i] == Rtt.b[i]);};"
+"Pd=vcmpb.gt(Rss,#s8)","for (i = 0; i < 8; i++) {Pd.i = (Rss.b[i] > #s);};"
+"Pd=vcmpb.gt(Rss,Rtt)","for (i = 0; i < 8; i++) {Pd.i = (Rss.b[i] > Rtt.b[i]);};"
+"Pd=vcmpb.gtu(Rss,#u7)","for (i = 0; i < 8; i++) {Pd.i = (Rss.ub[i] > #u);};"
+"Pd=vcmpb.gtu(Rss,Rtt)","for (i = 0; i < 8; i++) {Pd.i = (Rss.ub[i] > Rtt.ub[i]);};"
+"Pd=vcmpw.eq(Rss,#s8)","Pd[3:0] = (Rss.w[0]==#s);Pd[7:4] = (Rss.w[1]==#s);"
+"Pd=vcmpw.eq(Rss,Rtt)","Pd[3:0] = (Rss.w[0]==Rtt.w[0]);Pd[7:4] = (Rss.w[1]==Rtt.w[1]);"
+"Pd=vcmpw.gt(Rss,#s8)","Pd[3:0] = (Rss.w[0]>#s);Pd[7:4] = (Rss.w[1]>#s);"
+"Pd=vcmpw.gt(Rss,Rtt)","Pd[3:0] = (Rss.w[0]>Rtt.w[0]);Pd[7:4] = (Rss.w[1]>Rtt.w[1]);"
+"Pd=vcmpw.gtu(Rss,#u7)","Pd[3:0] = (Rss.uw[0]>#u);Pd[7:4] = (Rss.uw[1]>#u);"
+"Pd=vcmpw.gtu(Rss,Rtt)","Pd[3:0] = (Rss.uw[0]>Rtt.uw[0]);Pd[7:4] = (Rss.uw[1]>Rtt.uw[1]);"
+"Rd=vitpack(Ps,Pt)",Rd = (Ps&0x55) | (Pt&0xAA);
+"Rdd=vmux(Pu,Rss,Rtt)","for (i = 0; i < 8; i++) {Rdd.b[i]=(Pu.i?(Rss.b[i]):(Rtt.b[i]));};"
+"Rd=asl(Rs,#u5)",Rd = Rs << #u;
+"Rd=asr(Rs,#u5)",Rd = Rs >> #u;
+"Rd=lsr(Rs,#u5)",Rd = Rs >>> #u;
+"Rd=rol(Rs,#u5)",Rd = Rs <<R #u;
+"Rdd=asl(Rss,#u6)",Rdd = Rss << #u;
+"Rdd=asr(Rss,#u6)",Rdd = Rss >> #u;
+"Rdd=lsr(Rss,#u6)",Rdd = Rss >>> #u;
+"Rdd=rol(Rss,#u6)",Rdd = Rss <<R #u;
+"Rx=add(#u8,asl(Rx,#U5))",Rx=apply_extension(#u)+(Rx<<#U);
+"Rx=add(#u8,lsr(Rx,#U5))","Rx=apply_extension(#u)+(((unsignedint)Rx)>>#U);"
+"Rx=sub(#u8,asl(Rx,#U5))",Rx=apply_extension(#u)-(Rx<<#U);
+"Rx=sub(#u8,lsr(Rx,#U5))","Rx=apply_extension(#u)-(((unsignedint)Rx)>>#U);"
+"Rx[+-]=asl(Rs,#u5)",Rx = Rx [+-] (Rs << #u);
+"Rx[+-]=asr(Rs,#u5)",Rx = Rx [+-] (Rs >> #u);
+"Rx[+-]=lsr(Rs,#u5)",Rx = Rx [+-] (Rs >>> #u);
+"Rx[+-]=rol(Rs,#u5)",Rx = Rx [+-] (Rs <<R #u);
+"Rxx[+-]=asl(Rss,#u6)",Rxx = Rxx [+-] (Rss << #u);
+"Rxx[+-]=asr(Rss,#u6)",Rxx = Rxx [+-] (Rss >> #u);
+"Rxx[+-]=lsr(Rss,#u6)",Rxx = Rxx [+-] (Rss >>> #u);
+"Rxx[+-]=rol(Rss,#u6)",Rxx = Rxx [+-] (Rss <<R #u);
+"Rd=addasl(Rt,Rs,#u3)",Rd = Rt + (Rs << #u);
+"Rx=and(#u8,asl(Rx,#U5))",Rx=apply_extension(#u)&(Rx<<#U);
+"Rx=and(#u8,lsr(Rx,#U5))","Rx=apply_extension(#u)&(((unsignedint)Rx)>>#U);"
+"Rx=or(#u8,asl(Rx,#U5))",Rx=apply_extension(#u)|(Rx<<#U);
+"Rx=or(#u8,lsr(Rx,#U5))","Rx=apply_extension(#u)|(((unsignedint)Rx)>>#U);"
+"Rx[&|]=asl(Rs,#u5)",Rx = Rx [|&] Rs << #u;
+"Rx[&|]=asr(Rs,#u5)",Rx = Rx [|&] Rs >> #u;
+"Rx[&|]=lsr(Rs,#u5)",Rx = Rx [|&] Rs >>> #u;
+"Rx[&|]=rol(Rs,#u5)",Rx = Rx [|&] Rs <<R #u;
+"Rx^=asl(Rs,#u5)",Rx = Rx ^ Rs << #u;
+"Rx^=lsr(Rs,#u5)",Rx = Rx ^ Rs >>> #u;
+"Rx^=rol(Rs,#u5)",Rx = Rx ^ Rs <<R #u;
+"Rxx[&|]=asl(Rss,#u6)",Rxx = Rxx [|&] Rss << #u;
+"Rxx[&|]=asr(Rss,#u6)",Rxx = Rxx [|&] Rss >> #u;
+"Rxx[&|]=lsr(Rss,#u6)",Rxx = Rxx [|&] Rss >>> #u;
+"Rxx[&|]=rol(Rss,#u6)",Rxx = Rxx [|&] Rss <<R #u;
+"Rxx^=asl(Rss,#u6)",Rxx = Rxx ^ Rss << #u;
+"Rxx^=lsr(Rss,#u6)",Rxx = Rxx ^ Rss >>> #u;
+"Rxx^=rol(Rss,#u6)",Rxx = Rxx ^ Rss <<R #u;
+"Rd=asr(Rs,#u5):rnd",Rd = ((Rs >> #u)+1) >> 1;
+"Rd=asrrnd(Rs,#u5)","if (""#u5==0"") {Assembler mapped to: ""Rd=Rs"";} else {Assembler mapped to: ""Rd=asr(Rs,#u5-1):rnd"";};"
+"Rdd=asr(Rss,#u6):rnd","tmp = Rss >> #u;rnd = tmp & 1;Rdd = tmp >> 1 + rnd;"
+"Rdd=asrrnd(Rss,#u6)","if (""#u6==0"") {Assembler mapped to: ""Rdd=Rss"";} else {Assembler mapped to: ""Rdd=asr(Rss,#u6-1):rnd"";};"
+"Rd=asl(Rs,#u5):sat",Rd = sat32(sxt32->64(Rs) << #u);
+"Rd=asl(Rs,Rt)","shamt=sxt7->32(Rt);Rd = (shamt>0)?(sxt32->64(Rs)<<shamt):(sxt32->64(Rs)>>-shamt);"
+"Rd=asr(Rs,Rt)","shamt=sxt7->32(Rt);Rd = (shamt>0)?(sxt32->64(Rs)>>shamt):(sxt32->64(Rs)<<-shamt);"
+"Rd=lsl(#s6,Rt)","shamt = sxt7->32(Rt);Rd = (shamt>0)?(zxt32->64(#s)<<shamt):(zxt32->64(#s)>>>-shamt);"
+"Rd=lsl(Rs,Rt)","shamt=sxt7->32(Rt);Rd = (shamt>0)?(zxt32->64(Rs)<<shamt):(zxt32->64(Rs)>>>-shamt);"
+"Rd=lsr(Rs,Rt)","shamt=sxt7->32(Rt);Rd = (shamt>0)?(zxt32->64(Rs)>>>shamt):(zxt32->64(Rs)<<-shamt);"
+"Rdd=asl(Rss,Rt)","shamt=sxt7->32(Rt);Rdd = (shamt>0)?(Rss<<shamt):(Rss>>-shamt);"
+"Rdd=asr(Rss,Rt)","shamt=sxt7->32(Rt);Rdd = (shamt>0)?(Rss>>shamt):(Rss<<-shamt);"
+"Rdd=lsl(Rss,Rt)","shamt=sxt7->32(Rt);Rdd = (shamt>0)?(Rss<<shamt):(Rss>>>-shamt);"
+"Rdd=lsr(Rss,Rt)","shamt=sxt7->32(Rt);Rdd = (shamt>0)?(Rss>>>shamt):(Rss<<-shamt);"
+"Rx[+-]=asl(Rs,Rt)","shamt=sxt7->32(Rt);Rx = Rx [+-] ((shamt>0)?(sxt32->64(Rs)<<shamt):(sxt32->64(Rs)>>-shamt));"
+"Rx[+-]=asr(Rs,Rt)","shamt=sxt7->32(Rt);Rx = Rx [+-] ((shamt>0)?(sxt32->64(Rs)>>shamt):(sxt32->64(Rs)<<-shamt));"
+"Rx[+-]=lsl(Rs,Rt)","shamt=sxt7->32(Rt);Rx = Rx [+-] ((shamt>0)?(zxt32->64(Rs)<<shamt):(zxt32->64(Rs)>>>-shamt));"
+"Rx[+-]=lsr(Rs,Rt)","shamt=sxt7->32(Rt);Rx = Rx [+-] ((shamt>0)?(zxt32->64(Rs)>>>shamt):(zxt32->64(Rs)<<-shamt));"
+"Rxx[+-]=asl(Rss,Rt)","shamt=sxt7->32(Rt);Rxx = Rxx [+-]((shamt>0)?(Rss<<shamt):(Rss>>-shamt));"
+"Rxx[+-]=asr(Rss,Rt)","shamt=sxt7->32(Rt);Rxx = Rxx [+-]((shamt>0)?(Rss>>shamt):(Rss<<-shamt));"
+"Rxx[+-]=lsl(Rss,Rt)","shamt=sxt7->32(Rt);Rxx = Rxx [+-]((shamt>0)?(Rss<<shamt):(Rss>>>-shamt));"
+"Rxx[+-]=lsr(Rss,Rt)","shamt=sxt7->32(Rt);Rxx = Rxx [+-]((shamt>0)?(Rss>>>shamt):(Rss<<-shamt));"
+"Rx[&|]=asl(Rs,Rt)","shamt=sxt7->32(Rt);Rx = Rx [|&] ((shamt>0)?(sxt32->64(Rs)<<shamt):(sxt32->64(Rs)>>-shamt));"
+"Rx[&|]=asr(Rs,Rt)","shamt=sxt7->32(Rt);Rx = Rx [|&] ((shamt>0)?(sxt32->64(Rs)>>shamt):(sxt32->64(Rs)<<-shamt));"
+"Rx[&|]=lsl(Rs,Rt)","shamt=sxt7->32(Rt);Rx = Rx [|&] ((shamt>0)?(zxt32->64(Rs)<<shamt):(zxt32->64(Rs)>>>-shamt));"
+"Rx[&|]=lsr(Rs,Rt)","shamt=sxt7->32(Rt);Rx = Rx [|&] ((shamt>0)?(zxt32->64(Rs)>>>shamt):(zxt32->64(Rs)<<-shamt));"
+"Rxx[&|]=asl(Rss,Rt)","shamt=sxt7->32(Rt);Rxx = Rxx [|&]((shamt>0)?(Rss<<shamt):(Rss>>-shamt));"
+"Rxx[&|]=asr(Rss,Rt)","shamt=sxt7->32(Rt);Rxx = Rxx [|&]((shamt>0)?(Rss>>shamt):(Rss<<-shamt));"
+"Rxx[&|]=lsl(Rss,Rt)","shamt=sxt7->32(Rt);Rxx = Rxx [|&]((shamt>0)?(Rss<<shamt):(Rss>>>-shamt));"
+"Rxx[&|]=lsr(Rss,Rt)","shamt=sxt7->32(Rt);Rxx = Rxx [|&]((shamt>0)?(Rss>>>shamt):(Rss<<-shamt));"
+"Rxx^=asl(Rss,Rt)","shamt=sxt7->32(Rt);Rxx = Rxx ^((shamt>0)?(Rss<<shamt):(Rss>>-shamt));"
+"Rxx^=asr(Rss,Rt)","shamt=sxt7->32(Rt);Rxx = Rxx ^((shamt>0)?(Rss>>shamt):(Rss<<-shamt));"
+"Rxx^=lsl(Rss,Rt)","shamt=sxt7->32(Rt);Rxx = Rxx ^((shamt>0)?(Rss<<shamt):(Rss>>>-shamt));"
+"Rxx^=lsr(Rss,Rt)","shamt=sxt7->32(Rt);Rxx = Rxx ^((shamt>0)?(Rss>>>shamt):(Rss<<-shamt));"
+"Rd=asl(Rs,Rt):sat","shamt=sxt7->32(Rt);Rd = bidir_shiftl(Rs,shamt);"
+"Rd=asr(Rs,Rt):sat","shamt=sxt7->32(Rt);Rd = bidir_shiftr(Rs,shamt);"
+"Rdd=vaslh(Rss,#u4)","for (i=0;i<4;i++) {Rdd.h[i]=(Rss.h[i]<<#u);};",u);
+"Rdd=vasrh(Rss,#u4)","for (i=0;i<4;i++) {Rdd.h[i]=(Rss.h[i]>>#u);};",u);
+"Rdd=vlsrh(Rss,#u4)","for (i=0;i<4;i++) {Rdd.h[i]=(Rss.uh[i]>>#u);};","#u);"
+"Rdd=vasrh(Rss,#u4):raw","for (i=0;i<4;i++){Rdd.h[i]=( ((Rss.h[i] >> #u)+1)>>1 );};"
+"Rdd=vasrh(Rss,#u4):rnd","if (""#u4==0"")Assembler mapped to: ""Rdd=Rss"";} else {Assembler mapped to:""Rdd=vasrh(Rss,#u4-1):raw"";};"
+"Rd=vasrhub(Rss,#u4):raw","for (i=0;i<4;i++) {Rd.b[i]=usat8(((Rss.h[i] >> #u)+1)>>1);};"
+"Rd=vasrhub(Rss,#u4):rnd:sat","if (""#u4==0"") {Assembler mapped to: ""Rd=vsathub(Rss)"";} else {Assembler mapped to:""Rd=vasrhub(Rss,#u4-1):raw"";};"
+"Rd=vasrhub(Rss,#u4):sat","for (i=0;i<4;i++) {Rd.b[i]=usat8(Rss.h[i] >> #u);};"
+"Rdd=vaslh(Rss,Rt)","for (i=0;i<4;i++) {Rdd.h[i]=(sxt7->32(Rt)>0)?(sxt16->64(Rss.h[i])<<sxt7->32(Rt)):(sxt16->64(Rss.h[i])>>-sxt7->32(Rt));};"
+"Rdd=vasrh(Rss,Rt)","for (i=0;i<4;i++) {Rdd.h[i]=(sxt7->32(Rt)>0)?(sxt16->64(Rss.h[i])>>sxt7->32(Rt)):(sxt16->64(Rss.h[i])<<-sxt7->32(Rt));};"
+"Rdd=vlslh(Rss,Rt)","for (i=0;i<4;i++) {Rdd.h[i]=(sxt7->32(Rt)>0)?(zxt16->64(Rss.uh[i])<<sxt7->32(Rt)):(zxt16->64(Rss.uh[i])>>>-sxt7->32(Rt));};"
+"Rdd=vlsrh(Rss,Rt)","for (i=0;i<4;i++) {Rdd.h[i]=(sxt7->32(Rt)>0)?(zxt16->64(Rss.uh[i])>>>sxt7->32(Rt)):(zxt16->64(Rss.uh[i])<<-sxt7->32(Rt));};"
+"Rdd=vaslw(Rss,#u5)","for (i=0;i<2;i++) {Rdd.w[i]=(Rss.w[i]<<#u);}"
+"Rdd=vasrw(Rss,#u5)","for (i=0;i<2;i++) {Rdd.w[i]=(Rss.w[i]>>#u);}"
+"Rdd=vlsrw(Rss,#u5)","for (i=0;i<2;i++) {Rdd.w[i]=(Rss.uw[i]>>#u);}"
+"Rdd=vaslw(Rss,Rt)","for (i=0;i<2;i++) {Rdd.w[i]=(sxt7->32(Rt)>0)?(sxt32->64(Rss.w[i])<<sxt7->32(Rt)):(sxt32->64(Rss.w[i])>>-sxt7->32(Rt));};"
+"Rdd=vasrw(Rss,Rt)","for (i=0;i<2;i++) {Rdd.w[i]=(sxt7->32(Rt)>0)?(sxt32->64(Rss.w[i])>>sxt7->32(Rt)):(sxt32->64(Rss.w[i])<<-sxt7->32(Rt));};"
+"Rdd=vlslw(Rss,Rt)","for (i=0;i<2;i++) {Rdd.w[i]=(sxt7->32(Rt)>0)?(zxt32->64(Rss.uw[i])<<sxt7->32(Rt)):(zxt32->64(Rss.uw[i])>>>-sxt7->32(Rt));};"
+"Rdd=vlsrw(Rss,Rt)","for (i=0;i<2;i++) {Rdd.w[i]=(sxt7->32(Rt)>0)?(zxt32->64(Rss.uw[i])>>>sxt7->32(Rt)):(zxt32->64(Rss.uw[i])<<-sxt7->32(Rt));};"
+"Rd=vasrw(Rss,#u5)","for (i=0;i<2;i++) {Rd.h[i]=(Rss.w[i]>>#u).h[0];};"
+"Rd=vasrw(Rss,Rt)","for (i=0;i<2;i++) {Rd.h[i]=(sxt7->32(Rt)>0)?(sxt32->64(Rss.w[i])>>sxt7->32(Rt)):(sxt32->64(Rss.w[i])<<-sxt7->32(Rt)).h[0];};"
+"Rd=memw(Rs+#u4:2)","apply_extension(#u);EA=Rs+#u;Rd = *EA;"
+"Rd=memub(Rs+#u4:0)","apply_extension(#u);EA=Rs+#u;Rd = *EA;"
+"Rd=#u6","apply_extension(#r);Rd=#u;"
+"Rd=memuh(Rs+#u3:1)","apply_extension(#u);EA=Rs+#u;Rd = *EA;"
+"Rd=memh(Rs+#u3:1)","apply_extension(#u);EA=Rs+#u;Rd = *EA;"
+"Rd=memb(Rs+#u3:0)","apply_extension(#u);EA=Rs+#u;Rd = *EA;"
+"Rd=memw(r29+#u5:2)","apply_extension(#u);EA=r29+#u;Rd = *EA;"
+"Rdd=memd(r29+#u5:3)","apply_extension(#u);EA=r29+#u;Rdd = *EA;"
+if ([!]P0) dealloc_return,";;if ([!]P0[0]) {EA=FP;tmp = *EA;tmp = frame_unscramble(tmp);LR=tmp.w[1];FP=tmp.w[0];SP=EA+8;PC=tmp.w[1];} else {NOP;};"
+"if ([!]P0.new)dealloc_return:nt",";if ([!]P0.new[0]) {EA=FP;tmp = *EA;tmp = frame_unscramble(tmp);LR=tmp.w[1];FP=tmp.w[0];SP=EA+8;PC=tmp.w[1];} else {NOP;};"
+jumpr R31,PC=R31;
+if ([!]P0) jumpr R31,"Assembler mapped to: ""if ([!]P0)""""jumpr"""":nt """"R31"""
+"if ([!]P0[.new])jumpr:<hint> R31","if([!]P0[.new][0]){PC=R31;};"
+"memw(Rs+#u4:2)=Rt","apply_extension(#u);EA=Rs+#u;*EA = Rt;"
+"memh(Rs+#u3:1)=Rt","apply_extension(#u);EA=Rs+#u;*EA = Rt.h[0];"
+"memb(Rs+#u4:0)=Rt","apply_extension(#u);EA=Rs+#u;*EA = Rt&0xff;"
+"memw(r29+#u5:2)=Rt","apply_extension(#u);EA=r29+#u;*EA = Rt;"
+memd(r29+#s6:3)=Rtt,"apply_extension(#s);EA=r29+#s;*EA = Rtt;"
+memw(Rs+#u4:2)=#U1,"apply_extension(#u);EA=Rs+#u;tmp = #U;*EA = tmp;"
+memb(Rs+#u4)=#U1,"apply_extension(#u);EA=Rs+#u;tmp = #U;*EA = tmp;"
+allocframe(#u5:3),"EA=SP-8;*EA=frame_scramble((zxt32->64(LR) << 32) | zxt32->64(FP));FP=EA;frame_check_limit(EA-#u);SP=EA-#u;"
+"Rx=add(Rx,#s7)","apply_extension(#s);Rx=Rx+#s;"
+"Rd=#-1","apply_extension(#r);Rd=-1;"
+if ([!]P0[.new]) Rd=#0,"apply_extension(#s);if ([!]P0[.new][0]) Rd=0;else NOP;"
+"Rd=add(r29,#u6:2)","apply_extension(#s);Rd=r29+#u;"
+"Rx=add(Rx,Rs)",Rx=Rx+Rs;
+"P0=cmp.eq(Rs,#u2)","apply_extension(#u);P0=Rs==#u ? 0xff : 0x00;"
+"Rdd=combine(#0,Rs)","Rdd.w[0]=Rs;Rdd.w[1]=0;"
+"Rdd=combine(Rs,#0)","Rdd.w[0]=0;Rdd.w[1]=Rs;"
+"Rdd=combine(#u2,#U2)","apply_extension(#u);apply_extension(#U);Rdd.w[0]=#U;Rdd.w[1]=#u;"
+"Rd=add(Rs,#1)","Rd=Rs+1;"
+"Rd=add(Rs,#-1)","Rd=Rs-1;"
+"Rd=and(Rs,#1)","Rd=Rs&1;"
+"Rd=and(Rs,#255)","Rd=Rs&255;"

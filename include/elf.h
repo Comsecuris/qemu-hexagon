@@ -173,6 +173,8 @@ typedef int64_t  Elf64_Sxword;
 #define EM_MOXIE           223     /* Moxie processor family */
 #define EM_MOXIE_OLD       0xFEED
 
+#define EM_HEXAGON  164 /* QUALCOMM Hexagon */
+
 /* This is the info that is needed to parse the dynamic section of the file */
 #define DT_NULL		0
 #define DT_NEEDED	1

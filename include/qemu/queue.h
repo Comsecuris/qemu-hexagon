@@ -409,6 +409,16 @@ struct {                                                                \
         (listelm)->field.tqe_prev = &(elm)->field.tqe_next;             \
 } while (/*CONSTCOND*/0)
 
+#define QTAILQ_INSERT_RANGE_AFTER(head, listelm, begin, end, field) do {\
+        if (((end)->field.tqe_next = (listelm)->field.tqe_next) != NULL)\
+                (end)->field.tqe_next->field.tqe_prev =                 \
+                    &(end)->field.tqe_next;                             \
+        else                                                            \
+                (head)->tqh_last = &(end)->field.tqe_next;              \
+        (listelm)->field.tqe_next = (begin);                            \
+        (begin)->field.tqe_prev = &(listelm)->field.tqe_next;           \
+} while (/*CONSTCOND*/0)
+
 #define QTAILQ_REMOVE(head, elm, field) do {                            \
         if (((elm)->field.tqe_next) != NULL)                            \
                 (elm)->field.tqe_next->field.tqe_prev =                 \
@@ -417,6 +427,16 @@ struct {                                                                \
                 (head)->tqh_last = (elm)->field.tqe_prev;               \
         *(elm)->field.tqe_prev = (elm)->field.tqe_next;                 \
         (elm)->field.tqe_prev = NULL;                                   \
+} while (/*CONSTCOND*/0)
+
+#define QTAILQ_REMOVE_RANGE(head, begin, end, field) do {               \
+        if (((end)->field.tqe_next) != NULL)                            \
+                (end)->field.tqe_next->field.tqe_prev =                 \
+                    (begin)->field.tqe_prev;                            \
+        else                                                            \
+                (head)->tqh_last = (begin)->field.tqe_prev;             \
+        *(begin)->field.tqe_prev = (end)->field.tqe_next;               \
+        (begin)->field.tqe_prev = NULL;                                 \
 } while (/*CONSTCOND*/0)
 
 #define QTAILQ_FOREACH(var, head, field)                                \

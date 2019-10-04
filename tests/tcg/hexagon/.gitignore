@@ -1,0 +1,4 @@
+*.tst
+*.o
+pmu_statsfile.txt
+trunc_test_file.txt

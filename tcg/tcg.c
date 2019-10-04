@@ -2202,6 +2202,35 @@ TCGOp *tcg_emit_op(TCGOpcode opc)
     return op;
 }
 
+/* Insert the range between begin and end right before pos */
+void tcg_op_move_range_after(TCGOp *begin, TCGOp *end, TCGOp *pos) {
+    TCGOp *op;
+    struct TCGOpHead range;
+
+    assert(begin != NULL && end != NULL && pos != NULL &&
+           "Moving range with invalid arguments");
+
+    /* If pos == begin there is nothing to do */
+    if(pos == begin)
+        return;
+    
+    /* Sanity check: pos must not be between begin and end */
+    range.tqh_first = begin;
+    range.tqh_last = &end;
+    QTAILQ_FOREACH(op, &range, link) {
+        if (op == end)
+            break;
+        assert(op != pos && "Range contains target position");
+    }
+
+    /* Remove the range from the list */
+    QTAILQ_REMOVE_RANGE(&tcg_ctx->ops, begin, end, link);
+
+    /* Insert it before pos */
+    QTAILQ_INSERT_RANGE_AFTER(&tcg_ctx->ops, pos, begin, end, link);
+
+}
+
 TCGOp *tcg_op_insert_before(TCGContext *s, TCGOp *old_op,
                             TCGOpcode opc, int nargs)
 {

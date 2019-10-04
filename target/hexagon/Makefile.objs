@@ -1,0 +1,49 @@
+obj-y += translate.o op_helper.o helper.o cpu.o hexagon-semi.o
+obj-y += gdbstub.o decoder.o
+
+# build and run feature list generator
+feat-src = $(SRC_PATH)/target/$(TARGET_BASE_ARCH)/generator/
+feat-dst = $(BUILD_DIR)/$(TARGET_DIR)
+ifneq ($(MAKECMDGOALS),clean)
+GENERATED_FILES += target/$(TARGET_BASE_ARCH)/decoder.c
+endif
+
+$(feat-dst)instruction-decoding.json: $(feat-dst)instruction-decoding.json-timestamp
+	@cmp $< $@ >/dev/null 2>&1 || cp $< $@
+
+$(feat-dst)instruction-decoding.json-timestamp: $(feat-dst)best-decoding
+	$(call quiet-command,$< $(feat-src)instructions.csv 4 3 2 > $@,"GEN","$(TARGET_DIR)instruction-decoding.json")
+
+$(feat-dst)sub-instruction-decoding.json: $(feat-dst)sub-instruction-decoding.json-timestamp
+	@cmp $< $@ >/dev/null 2>&1 || cp $< $@
+
+$(feat-dst)sub-instruction-decoding.json-timestamp: $(feat-dst)best-decoding
+	$(call quiet-command,$< $(feat-src)sub-instructions.csv 4 3 2 > $@,"GEN","$(TARGET_DIR)sub-instruction-decoding.json")
+
+$(feat-dst)best-decoding: $(feat-src)best-decoding.c
+	$(call quiet-command,$(HOST_CC) -o $@ $<,"CC","$(TARGET_DIR)best-decoding")
+
+# semantics
+$(feat-dst)semantics : $(feat-dst)lex.yy.c $(feat-dst)semantics.tab.c
+	$(call quiet-command,$(HOST_CC) -I$(feat-src)semantics -o $@ $^,"CC","$(TARGET_DIR)semantics")
+
+$(feat-dst)semantics.tab.h $(feat-dst)semantics.tab.c : $(feat-src)semantics/semantics.y $(feat-src)semantics/semantics_struct.h
+	$(call quiet-command,bison --defines=$(feat-dst)semantics.tab.h --output=$(feat-dst)semantics.tab.c $<,"BISON","$(TARGET_DIR)semantics.tab.c")
+
+$(feat-dst)lex.yy.c : $(feat-src)semantics/semantics.lex $(feat-dst)semantics.tab.h $(feat-src)semantics/semantics_struct.h
+	$(call quiet-command,flex --outfile=$(feat-dst)lex.yy.c $<,"FLEX","$(TARGET_DIR)lex.yy.c")
+
+target/$(TARGET_BASE_ARCH)/decoder.c: $(feat-src)decoder_gen.py $(feat-dst)semantics $(feat-dst)instruction-decoding.json $(feat-dst)sub-instruction-decoding.json
+	$(call quiet-command,$< $(feat-dst)semantics $(feat-src)meta-instructions.csv $(feat-src)instructions.csv $(feat-src)sub-instructions.csv $(feat-src)const-ext.csv $(feat-dst)instruction-decoding.json $(feat-dst)sub-instruction-decoding.json target/$(TARGET_BASE_ARCH)/decoder.c target/$(TARGET_BASE_ARCH)/decoder.h,"GEN","$(TARGET_DIR)decoder.c")
+
+target/$(TARGET_BASE_ARCH)/decoder.o : target/$(TARGET_BASE_ARCH)/decoder.c
+
+clean-target:
+	rm -f target/$(TARGET_BASE_ARCH)/decoder.o
+	rm -f target/$(TARGET_BASE_ARCH)/decoder.c target/$(TARGET_BASE_ARCH)/decoder.h
+	rm -f $(feat-dst)lex.yy.c
+	rm -f $(feat-dst)semantics.tab.h $(feat-dst)semantics.tab.c
+	rm -f $(feat-dst)semantics
+	rm -f $(feat-dst)best-decoding
+	rm -f $(feat-dst)instruction-decoding.json $(feat-dst)sub-instruction-decoding.json
+	rm -f $(feat-dst)instruction-decoding.json-timestamp $(feat-dst)sub-instruction-decoding.json-timestamp

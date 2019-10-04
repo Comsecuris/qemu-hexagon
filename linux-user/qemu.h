@@ -115,7 +115,8 @@ typedef struct TaskState {
     int sim_syscalls;
     abi_ulong tp_value;
 #endif
-#if defined(TARGET_ARM) || defined(TARGET_M68K)
+#if defined(TARGET_ARM) || defined(TARGET_M68K) || \
+    defined(TARGET_HEXAGON)
     /* Extra fields for semihosted binaries.  */
     abi_ulong heap_base;
     abi_ulong heap_limit;
